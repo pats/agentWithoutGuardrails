@@ -34,3 +34,8 @@ it: `isPathSafe` keeps writes inside the project directory, and
 `isProtectedFile` blocks writes to specific sensitive files (`.env` and
 similar) regardless of path formatting or letter case. Both were
 hardened after real incidents — see `docs/incidents.md`.
+
+## Contributing / AI assistants
+
+See `AGENTS.md` for conventions and safety context before making changes.
+Agents operate in read-only/review mode in this repo — see AGENTS.md for details.
