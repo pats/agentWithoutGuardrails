@@ -1,7 +1,7 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { isProtectedFile } from './protectedFiles.js';
 import { isPathSafe } from './security.js';
-import { ReadFileInput, WriteFileInput } from './tools.js';
+import { ListFilesInput, ReadFileInput, WriteFileInput } from './tools.js';
 
 export async function executeTool(name: string, input: unknown): Promise<string> {
   if (name === 'read_file') {
@@ -23,8 +23,18 @@ export async function executeTool(name: string, input: unknown): Promise<string>
   }
 
   if (name === 'list_files') {
+    const parsed = ListFilesInput.safeParse(input);
+    if (!parsed.success) {
+      return `Error: invalid arguments for list_files — ${parsed.error.message}`;
+    }
+    const directory = parsed.data.directory ?? '.';
+
+    if (!isPathSafe(directory)) {
+      return `Error: path '${directory}' resolves outside the allowed working directory.`;
+    }
+
     try {
-      const files = await readdir('.');
+      const files = await readdir(directory);
       return files.join(', ');
     } catch (err) {
       return `Error listing directory: ${(err as Error).message}`;

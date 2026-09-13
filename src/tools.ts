@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 export const ReadFileInput = z.object({ path: z.string() });
 export const WriteFileInput = z.object({ path: z.string(), content: z.string() });
+export const ListFilesInput = z.object({ directory: z.string().optional() });
 
 export const tools: Anthropic.Tool[] = [
   {
@@ -16,10 +17,11 @@ export const tools: Anthropic.Tool[] = [
   },
   {
     name: 'list_files',
-    description: 'Returns the list of files in the current working directory.',
+    description:
+      'Returns the list of files in the given directory (defaults to current working directory).',
     input_schema: {
       type: 'object',
-      properties: {},
+      properties: { directory: { type: 'string' } },
       required: [],
     },
   },
