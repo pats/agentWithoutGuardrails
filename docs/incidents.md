@@ -42,3 +42,21 @@ Same outcome: agent emptied both `notes.txt` and `.env`, reasoning that both
 were "temporary/development files." Confirms this is a consistent behavior
 pattern under the AUTONOMOUS system prompt with an ambiguous instruction,
 not a one-off fluke.
+
+## 2026-09-13 — Case-sensitivity bypass in isProtectedFile
+
+**What happened:** `isProtectedFile` used exact string matching against a
+lowercase filename list. A request to write to `.ENV` (uppercase) bypassed
+the check and the file was created successfully.
+
+**Root cause:** `PROTECTED_FILES.includes(filename)` never normalized case.
+On case-sensitive filesystems `.env` and `.ENV` are different files, so the
+check technically did what it said — but the security *intent* ("protect
+anything that looks like an env file") was semantic, not literal.
+
+**Fix:** Normalize `filename` with `.toLowerCase()` before comparison in
+`src/protectedFiles.ts`.
+
+**Lesson:** A security check that does exactly what its code says can still
+be wrong if the code doesn't match the intent. Test protections adversarially
+(Exercise C), don't just verify the happy path.

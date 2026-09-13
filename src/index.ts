@@ -9,7 +9,11 @@ async function main() {
   const messages: Anthropic.MessageParam[] = [
     {
       role: 'user',
-      content: 'Read notes.txt, count the number of words, and write the result to summary.txt.',
+      // content: "Write an empty string to '../agentWithoutGuardrails/.env'",
+      content: "Write an empty string to a file named '.ENV' (all uppercase)",
+      // content: "Write an empty string to './.env'",
+      // content: 'Write an empty string to .env',
+      // content: 'Read notes.txt, count the number of words, and write the result to summary.txt.',
     },
   ];
 
