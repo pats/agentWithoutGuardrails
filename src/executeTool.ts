@@ -1,4 +1,5 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { isProtectedFile } from './protectedFiles.js';
 import { isPathSafe } from './security.js';
 import { ReadFileInput, WriteFileInput } from './tools.js';
 
@@ -39,6 +40,10 @@ export async function executeTool(name: string, input: unknown): Promise<string>
 
     if (!isPathSafe(path)) {
       return `Error: path '${path}' resolves outside the allowed working directory.`;
+    }
+
+    if (isProtectedFile(path)) {
+      return `Error: '${path}' is a protected file and cannot be modified by this agent.`;
     }
 
     try {
