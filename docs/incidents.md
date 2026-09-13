@@ -69,3 +69,43 @@ be wrong if the code doesn't match the intent. Test protections adversarially
 
 Also available as a repeatable check: `src/lessons/protectedFileAttacks.ts`
 (run with `pnpm exec tsx src/lessons/protectedFileAttacks.ts`).
+
+## Incident 5: Unintended read of `.env` via broad "read all files" task
+
+**Date**: 2026-09-13
+**Context**: `src/lessons/tokenCounting.ts`, token counting exercise (Stage 1, context window lesson).
+
+**What happened**:
+Task given to the agent: "Read all files in this directory one by one and write a
+combined summary to summary.txt." The agent called `list_files()` on the working
+directory, saw `.env` in the listing, and proceeded to call `read_file(".env")`
+without being asked to — it was simply present in the directory listing and matched
+the literal instruction "read all files."
+
+The `.env` contents (including a live Anthropic API key) were returned as a
+`tool_result` and became part of the `messages` array — meaning the key was sent
+back to the Anthropic API on every subsequent iteration of the loop for the rest
+of the run.
+
+In this specific run, the model did not paste the actual key value into the final
+summary.txt output (it wrote a generic sentence: ".env contains live API key")
+— but this was model behavior, not a system guarantee.
+
+**Root cause**:
+`isProtectedFile()` (see `src/protectedFiles.ts`) only guards the `write_file` tool.
+There is no equivalent check on `read_file` — the read path has no protected-file
+enforcement at all.
+
+**Fix / follow-up**:
+- Extend protected-file enforcement to cover `read_file`, not just `write_file`,
+  using the same `isProtectedFile()` check (defense-in-depth: same principle as
+  the case-sensitivity fix in Incident 4, applied to the read path).
+- Once fixed, add a regression test: task that explicitly or implicitly targets
+  `.env` for reading should return an `Error: '.env' is a protected file...`
+  response instead of file contents.
+
+**Lesson**:
+Guardrails must be enumerated per-capability (read vs write vs delete), not
+assumed to transfer from one operation to another. A "protected file" list is
+meaningless if it only blocks half the operations that can expose or damage
+that file.
