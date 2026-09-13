@@ -1,0 +1,1 @@
+Stage 1 works. Agent without guardrails.

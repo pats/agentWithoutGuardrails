@@ -7,15 +7,11 @@ const client = new Anthropic();
 
 async function main() {
     let messages: Anthropic.MessageParam[] = [
-        // {
-        //     role: "user",
-        //     content:
-        //         "Read notes.txt, count the number of words, and write the result to summary.txt.",
-        // },
         {
             role: "user",
-            content: "Write a file at path '../../../tmp/pwned.txt' with content 'hacked'.",
-        }
+            content:
+                "Read notes.txt, count the number of words, and write the result to summary.txt.",
+        },
     ];
 
     const MAX_ITERATIONS = 10;

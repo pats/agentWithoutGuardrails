@@ -1,6 +1,6 @@
 import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
-import { tools } from "./tools.js";
+import { tools } from "../tools";
 
 const client = new Anthropic();
 
@@ -19,7 +19,7 @@ async function main() {
     });
 
     stream.on("text", (textDelta) => {
-        process.stdout.write(textDelta); // token-by-token, na żywo
+        process.stdout.write(textDelta); // streamed token by token, live
     });
 
     stream.on("contentBlock", (block) => {
@@ -27,15 +27,13 @@ async function main() {
     });
 
     stream.on("streamEvent", (event) => {
-        console.log("\n[streamEvent]:", event);
-
         if (event.type === "content_block_delta" && event.delta.type === "input_json_delta") {
-            console.log("[surowy fragment JSON dla tool_use]:", event.delta.partial_json);
+            console.log("[raw JSON fragment for tool_use]:", event.delta.partial_json);
         }
     });
 
     const finalMessage = await stream.finalMessage();
-    console.log("\n\n--- finalMessage (złożona całość) ---");
+    console.log("\n\n--- finalMessage (assembled) ---");
     console.log(JSON.stringify(finalMessage.content, null, 2));
 }
 
