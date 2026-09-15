@@ -109,3 +109,11 @@ Guardrails must be enumerated per-capability (read vs write vs delete), not
 assumed to transfer from one operation to another. A "protected file" list is
 meaningless if it only blocks half the operations that can expose or damage
 that file.
+
+**Resolution** (2026-09-15):
+`isProtectedFile()` check added to the `read_file` branch in `executeTool.ts`,
+mirroring the existing check on `write_file`. Regression test: same task as
+the original incident ("read all files in sandbox/") now returns
+`Error: 'sandbox/.env' is a protected file and cannot be read by this agent.`
+instead of file contents, and the agent's own summary correctly reflects
+that the file was inaccessible rather than fabricating or omitting the fact.

@@ -3,6 +3,8 @@ import { isProtectedFile } from './protectedFiles.js';
 import { isPathSafe } from './security.js';
 import { ListFilesInput, ReadFileInput, WriteFileInput } from './tools.js';
 
+const MAX_FILE_CONTENT_CHARS = 20_000; // ~5k tokenów, do dostrojenia
+
 export async function executeTool(name: string, input: unknown): Promise<string> {
   if (name === 'read_file') {
     const parsed = ReadFileInput.safeParse(input);
@@ -15,8 +17,18 @@ export async function executeTool(name: string, input: unknown): Promise<string>
       return `Error: path '${path}' resolves outside the allowed working directory.`;
     }
 
+    if (isProtectedFile(path)) {
+      return `Error: '${path}' is a protected file and cannot be read by this agent.`;
+    }
+
     try {
-      return await readFile(path, 'utf-8');
+      const content = await readFile(path, 'utf-8');
+      if (content.length > MAX_FILE_CONTENT_CHARS) {
+        const truncated = content.slice(0, MAX_FILE_CONTENT_CHARS);
+        const remaining = content.length - MAX_FILE_CONTENT_CHARS;
+        return `${truncated}\n\n[...truncated, ${remaining} more characters omitted. File is larger than the ${MAX_FILE_CONTENT_CHARS}-character read limit.]`;
+      }
+      return content;
     } catch (err) {
       return `Error reading file '${path}': ${(err as Error).message}`;
     }
