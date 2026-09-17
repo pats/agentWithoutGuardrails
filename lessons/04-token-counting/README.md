@@ -10,15 +10,15 @@ window.
 ## Prerequisites
 
 Sandbox fixtures, isolated to this lesson's own subdirectory (never reuse
-`sandbox/03-sandbox-incident/` here — that's what caused Incident 5, see
+`lessons/03-sandbox-incident/sandbox/` here — that's what caused Incident 5, see
 `docs/incidents.md`):
 
 ```bash
-pnpm exec tsx src/lessons/generateFixtures.ts
+pnpm exec tsx lessons/04-token-counting/generateFixtures.ts
 ```
 
 This writes `access-log-en.txt`, `access-log-pl.txt`, and
-`audit-log-en.txt` into `sandbox/04-token-counting/`.
+`audit-log-en.txt` into `lessons/04-token-counting/sandbox/`.
 
 ## Before
 
@@ -65,10 +65,10 @@ round-trip latency, not money.
 
 ## After
 
-Sandbox: three generated log-style files (`src/lessons/generateFixtures.ts`)
+Sandbox: three generated log-style files (`generateFixtures.ts` (this folder))
 — `access-log-en.txt` (4000 lines), `access-log-pl.txt` (4000 lines, same
 data shape in Polish), `audit-log-en.txt` (6000 lines). Task: read all files
-in `sandbox/04-token-counting/` and write a combined summary.
+in `lessons/04-token-counting/sandbox/` and write a combined summary.
 
 | Iteration | Heuristic | Actual (countTokens) | Error   |
 |-----------|----------:|----------------------:|--------:|
@@ -132,10 +132,3 @@ the first place. Defense in depth, same principle as Incident 4.
 
 Implement truncation on individual `tool_result` outputs, then a proactive
 token-threshold check before `create()` — see next lesson.
-
-## Git tags
-
-- Start: `lesson-04-token-counting-start` (`dbe51ad`) — repo state
-  before this lesson's code existed
-- Done: `lesson-04-token-counting-done` (`be8318e`) — finished code +
-  docs

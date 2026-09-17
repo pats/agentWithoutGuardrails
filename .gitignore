@@ -3,4 +3,5 @@ node_modules
 dist
 .idea
 summary.txt
-sandbox/**/*.txt
+lessons/04-token-counting/sandbox/*.txt
+lessons/05-context-compaction/sandbox/*.txt

@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-# Scaffolds a new lesson: tags the -start commit, creates the script
-# stub, the doc from TEMPLATE.md, and wires up package.json + README.
+# Scaffolds a new, self-contained lesson folder: lessons/NN-<slug>/
+# with a script stub + README.md from lessons/TEMPLATE/README.md, and
+# wires up package.json + the top-level README.md table.
+#
+# No git tags — the folder on main IS the record. See "Lesson
+# lifecycle" in AGENTS.md.
 #
 # Usage:
 #   ./scripts/new-lesson.sh <NN> <kebab-slug> ["Title Case Name"]
@@ -8,9 +12,11 @@
 # Example:
 #   ./scripts/new-lesson.sh 06 prompt-caching "Prompt Caching Mechanics"
 #
-# See the "Lesson lifecycle" section in AGENTS.md for what happens
-# after this: you still have to do the actual learning, then fill in
-# Before/After/Conclusions yourself and tag -done when finished.
+# If your lesson needs the tool-use loop (executeTool/tools/security/
+# protectedFiles), copy them in yourself:
+#   cp src/{executeTool,tools,security,protectedFiles}.ts lessons/NN-<slug>/
+# and change their imports from './X.js' to match (they already use
+# relative imports, so copying as-is usually just works).
 
 set -euo pipefail
 
@@ -43,31 +49,28 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 FILE_NAME="$(node -e "const s=process.argv[1].split('-'); console.log(s.map((w,i)=>i===0?w:w[0].toUpperCase()+w.slice(1)).join(''))" "$SLUG")"
-DOC_PATH="docs/lessons/${NN}-${SLUG}.md"
-SCRIPT_PATH="src/lessons/${FILE_NAME}.ts"
-START_TAG="lesson-${NN}-${SLUG}-start"
-DONE_TAG="lesson-${NN}-${SLUG}-done"
+LESSON_DIR="lessons/${NN}-${SLUG}"
 
-if [ -e "$DOC_PATH" ] || [ -e "$SCRIPT_PATH" ]; then
-  echo "Już istnieje: $DOC_PATH albo $SCRIPT_PATH — nic nie nadpisuję." >&2
+if [ -e "$LESSON_DIR" ]; then
+  echo "Już istnieje: $LESSON_DIR — nic nie nadpisuję." >&2
   exit 1
 fi
-if git rev-parse -q --verify "refs/tags/$START_TAG" >/dev/null; then
-  echo "Tag $START_TAG już istnieje — nic nie nadpisuję." >&2
+if ! [ -f "lessons/TEMPLATE/README.md" ]; then
+  echo "Brak lessons/TEMPLATE/README.md — nie mogę zbudować README dla nowej lekcji." >&2
   exit 1
 fi
 
-# 1. Tag -start ZANIM powstanie jakikolwiek kod tej lekcji
-git tag "$START_TAG"
-START_HASH="$(git rev-parse --short "$START_TAG")"
-echo "Otagowano $START_TAG -> $START_HASH"
+mkdir -p "$LESSON_DIR"
 
-# 2. Stub skryptu lekcji
-cat > "$SCRIPT_PATH" << EOF
+# 1. Stub skryptu lekcji
+cat > "$LESSON_DIR/${FILE_NAME}.ts" << EOF
 import 'dotenv/config';
 import Anthropic from '@anthropic-ai/sdk';
-// import { executeTool } from '../executeTool.js';
-// import { tools } from '../tools.js';
+// Jeśli ta lekcja potrzebuje pętli tool-use, skopiuj do tego folderu:
+//   cp src/{executeTool,tools,security,protectedFiles}.ts ${LESSON_DIR}/
+// i odkomentuj poniżej (importy są już relatywne, więc zwykle działają bez zmian):
+// import { executeTool } from './executeTool.js';
+// import { tools } from './tools.js';
 
 const client = new Anthropic();
 const MODEL = 'claude-haiku-4-5-20251001';
@@ -79,42 +82,32 @@ async function run() {
 
 run();
 EOF
-echo "Utworzono $SCRIPT_PATH"
+echo "Utworzono $LESSON_DIR/${FILE_NAME}.ts"
 
-# 3. Dokument z TEMPLATE.md, z podstawionymi placeholderami
+# 2. README z TEMPLATE
 sed \
   -e "s/^# NN — <Lesson title>/# ${NN} — ${TITLE}/" \
-  -e "s#<fileName>#${FILE_NAME}#g" \
+  -e "s#<scriptFileName>#${FILE_NAME}#g" \
   -e "s/pnpm run lesson:NN/pnpm run lesson:${NN}/g" \
-  -e "s/lesson-NN-<slug>/lesson-${NN}-${SLUG}/g" \
-  docs/lessons/TEMPLATE.md > "$DOC_PATH"
+  lessons/TEMPLATE/README.md > "$LESSON_DIR/README.md"
+echo "Utworzono $LESSON_DIR/README.md"
 
-node -e "
-const fs = require('fs');
-const p = '$DOC_PATH';
-let s = fs.readFileSync(p, 'utf8');
-s = s.replace('\`$START_TAG\` (\`<commit-hash>\`)', '\`$START_TAG\` (\`$START_HASH\`)');
-s = s.replace('\`$DONE_TAG\` (\`<commit-hash>\`)', '\`$DONE_TAG\` (\`<fill in after tagging -done>\`)');
-fs.writeFileSync(p, s);
-"
-echo "Utworzono $DOC_PATH"
-
-# 4. package.json — alias lesson:NN
+# 3. package.json — alias lesson:NN
 node -e "
 const fs = require('fs');
 const p = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-p.scripts['lesson:${NN}'] = 'tsx src/lessons/${FILE_NAME}.ts';
+p.scripts['lesson:${NN}'] = 'tsx ${LESSON_DIR}/${FILE_NAME}.ts';
 fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
 "
 echo "Dodano alias lesson:${NN} w package.json"
 
-# 5. README — wiersz w tabeli
+# 4. README.md (root) — wiersz w tabeli
 node -e "
 const fs = require('fs');
 const path = 'README.md';
 let s = fs.readFileSync(path, 'utf8');
-const marker = '|---|---|---|---|---|---|\n';
-const row = '| ${NN} | \`src/lessons/${FILE_NAME}.ts\` | \`${DOC_PATH}\` | \`pnpm run lesson:${NN}\` | \`${START_TAG}\` | \`${DONE_TAG}\` |\n';
+const marker = '|---|---|---|\n';
+const row = '| ${NN} | \`${LESSON_DIR}/\` | \`pnpm run lesson:${NN}\` |\n';
 if (!s.includes(marker)) { console.error('Nie znaleziono nagłówka tabeli w README — dodaj wiersz ręcznie.'); process.exit(1); }
 s = s.replace(marker, marker + row);
 fs.writeFileSync(path, s);
@@ -123,8 +116,8 @@ echo "Dodano wiersz do tabeli w README.md"
 
 echo
 echo "Gotowe. Zostało:"
-echo "  1. Zrób samą naukę / eksperyment w $SCRIPT_PATH"
-echo "  2. Uzupełnij $DOC_PATH: Before (PRZED odpaleniem), After (realny output), Conclusions"
-echo "  3. git add -A && git commit -m \"feat: lesson ${NN} — ${TITLE}\""
-echo "  4. git tag ${DONE_TAG}"
-echo "  5. git push && git push --tags"
+echo "  1. (opcjonalnie) skopiuj potrzebne pliki: cp src/{executeTool,tools,security,protectedFiles}.ts $LESSON_DIR/"
+echo "  2. Zrób samą naukę / eksperyment w $LESSON_DIR/${FILE_NAME}.ts"
+echo "  3. Uzupełnij $LESSON_DIR/README.md: Before (PRZED odpaleniem), After (realny output), Conclusions"
+echo "  4. git add -A && git commit -m \"feat: lesson ${NN} — ${TITLE}\""
+echo "  5. git push"

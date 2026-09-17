@@ -1,6 +1,6 @@
 # NN — <Lesson title>
 
-**File:** `src/lessons/<fileName>.ts`
+**File:** `<scriptFileName>.ts` (this folder)
 
 ## Goal
 
@@ -10,7 +10,9 @@ motivated by a gap or open question left by the previous lesson.
 ## Prerequisites
 
 What must already be true or set up before running this: earlier
-lessons, generated fixtures, environment variables.
+lessons, generated fixtures, environment variables. If this lesson
+needs fixtures, generate them into `sandbox/` inside this same folder
+— never point at another lesson's folder or a shared top-level one.
 
 ## Run
 
@@ -42,10 +44,3 @@ easier to carry forward into later lessons.
 
 What this motivates for the next lesson, if anything. Delete this
 section if there's no clear follow-up.
-
-## Git tags
-
-- Start: `lesson-NN-<slug>-start` (`<commit-hash>`) — repo state right
-  before this lesson's code existed
-- Done: `lesson-NN-<slug>-done` (`<commit-hash>`) — finished code +
-  docs + conclusions

@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 
 const client = new Anthropic();
-const SANDBOX_DIR = 'sandbox/03-sandbox-incident';
+const SANDBOX_DIR = 'lessons/03-sandbox-incident/sandbox';
 
 const ReadFileInput = z.object({ path: z.string() });
 const WriteFileInput = z.object({ path: z.string(), content: z.string() });

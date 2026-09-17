@@ -17,57 +17,54 @@ pnpm dev
 - `src/index.ts` — main agent loop
 - `src/tools.ts` / `src/executeTool.ts` — tool definitions and execution
 - `src/security.ts` / `src/protectedFiles.ts` — safety layers
-- `src/lessons/` — standalone scripts on specific mechanics, see `docs/lessons/`
-- `sandbox/<NN-lesson-name>/` — disposable files scoped to one lesson,
-  never the real project data. Each lesson gets its own subdirectory so
-  runs don't leak state into each other (see `docs/incidents.md`,
-  Incident 5, for what happens when they share one)
+- `lessons/NN-<slug>/` — the numbered curriculum. Each lesson is a
+  **self-contained folder**: its own copy of every file it needs
+  (script, any shared helpers like `executeTool.ts`/`tools.ts` it
+  depends on, its own fixtures, its own `README.md` write-up). Nothing
+  in `lessons/` imports from outside its own folder — you could copy
+  any single `lessons/NN-<slug>/` folder out of this repo and it would
+  still run.
 - `docs/incidents.md` — dangerous agent behavior observed while building this
 
 ## Lessons
 
-The scripts in `src/lessons/` build on each other and are meant to be worked
-through **in order**, not picked at random — each one assumes the mechanics
-from earlier lessons are already understood, and some reuse fixtures or
-safety layers hardened in previous steps.
+The folders under `lessons/` build on each other and are meant to be
+worked through **in order**, not picked at random — each one assumes
+the mechanics from earlier lessons are already understood, even though
+each folder is technically self-contained and duplicates what it needs.
 
-| # | Script | Write-up | Run | Start tag | Done tag |
-|---|---|---|---|---|---|
-| 01 | `src/lessons/streaming.ts` | `docs/lessons/01-streaming.md` | `pnpm run lesson:01` | `lesson-01-streaming-start` | `lesson-01-streaming-done` |
-| 02 | `src/lessons/systemPrompt.ts` | `docs/lessons/02-system-prompt.md` | `pnpm run lesson:02` | `lesson-02-system-prompt-start` | `lesson-02-system-prompt-done` |
-| 03 | `src/lessons/sandboxIncident.ts` | `docs/lessons/03-sandbox-incident.md` | `pnpm run lesson:03` | `lesson-03-sandbox-incident-start` | `lesson-03-sandbox-incident-done` |
-| 04 | `src/lessons/tokenCounting.ts`<br>`src/lessons/generateFixtures.ts` | `docs/lessons/04-token-counting.md` | `pnpm run lesson:04` | `lesson-04-token-counting-start` | `lesson-04-token-counting-done` |
-| 05 | `src/lessons/contextWindowManagement.ts` | `docs/lessons/05-context-compaction.md` | `pnpm run lesson:05` | `lesson-05-context-compaction-start` | `lesson-05-context-compaction-done` |
+| # | Folder | Run |
+|---|---|---|
+| 01 | `lessons/01-streaming/` | `pnpm run lesson:01` |
+| 02 | `lessons/02-system-prompt/` | `pnpm run lesson:02` |
+| 03 | `lessons/03-sandbox-incident/` | `pnpm run lesson:03` |
+| 04 | `lessons/04-token-counting/` | `pnpm run lesson:04` |
+| 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05` |
 
-Each write-up documents the goal, what was expected before running
-(**Before**), what actually happened (**After**) — including failures,
-e.g. lesson 04's context-limit crash — and the conclusions carried
-forward into later lessons or into `docs/incidents.md`.
+Each lesson's `README.md` documents the goal, what was expected before
+running (**Before**), what actually happened (**After**) — including
+failures, e.g. lesson 04's context-limit crash and lesson 05's
+compaction loop — and the conclusions carried forward into later
+lessons or into `docs/incidents.md`.
 
 ### Reproducibility
 
-Every lesson has two git tags: **start** (repo state right before that
-lesson's code existed — check this out to redo the exercise from
-scratch) and **done** (finished code, docs, and conclusions — check
-this out to see the final result). `git checkout lesson-04-token-counting-start`
-gets you the blank slate; `git checkout lesson-04-token-counting-done`
-gets you the finished lesson.
-
-Note: `lesson-01-streaming-start` predates the lesson entirely, but
-`lesson-02-system-prompt-start` and `lesson-03-sandbox-incident-start`
-point to the *same* commit — those two lessons were introduced together
-in one commit historically, so there's no way to isolate "before 02"
-from "before 03" individually. Both `-done` tags for 02/03 also share
-one commit for the same reason. From lesson 04 onward this is clean:
-each lesson gets its own start commit (before you begin) and its own
-done commit (`feat:` + `docs:`, then tag both), before moving to the
-next (see `AGENTS.md`).
+No git tags, no checkouts needed. Every lesson's finished code, fixtures,
+and write-up live together, permanently, in its own folder on `main` —
+open `lessons/04-token-counting/` and you're looking at the complete,
+final state of lesson 04, right now, same as any other file in the repo.
+"Before" isn't a separate checkout either — it's the **Before** section
+in that lesson's `README.md`, written as a hypothesis before the code
+existed, which is the part of "before" that actually matters (what you
+expected to happen), not a literal snapshot of an empty file.
 
 ## Commands
 
 - `pnpm dev` — run the main agent loop
 - `pnpm check` — format and lint with Biome
-- `pnpm exec tsx src/lessons/<file>.ts` — run an individual lesson
+- `pnpm run lesson:NN` — run a specific lesson (see table above)
+- `./scripts/new-lesson.sh <NN> <kebab-slug> ["Title"]` — scaffold a new
+  lesson folder
 
 ## Safety notes
 

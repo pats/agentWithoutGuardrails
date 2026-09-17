@@ -1,6 +1,6 @@
 # 01 — Token-level streaming
 
-**File:** `src/lessons/streaming.ts`
+**File:** `streaming.ts` (this folder)
 
 ## Goal
 
@@ -40,9 +40,3 @@ result shape identical to a non-streamed `messages.create()` call.
 Streaming isn't a different API contract, it's the same contract
 observed incrementally — worth knowing before building anything (e.g.
 a UI) that needs to react to partial output.
-
-## Git tags
-
-- Start: `lesson-01-streaming-start` (`d045107`) — repo state before
-  any streaming-lesson code existed
-- Done: `lesson-01-streaming-done` (`b2e6ccd`) — finished code + docs

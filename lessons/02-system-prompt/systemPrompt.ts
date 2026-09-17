@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import Anthropic from '@anthropic-ai/sdk';
-import { executeTool } from '../executeTool.js';
-import { tools } from '../tools.js';
+import { executeTool } from './executeTool.js';
+import { tools } from './tools.js';
 
 const client = new Anthropic();
 

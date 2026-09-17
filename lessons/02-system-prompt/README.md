@@ -1,6 +1,6 @@
 # 02 — System prompt as a behavior lever
 
-**File:** `src/lessons/systemPrompt.ts`
+**File:** `systemPrompt.ts` (this folder)
 
 ## Goal
 
@@ -49,13 +49,3 @@ The system prompt shapes the agent's *plan*, not just its tone. The
 effect is small on precise, single-path tasks and can be large on
 ambiguous ones — because ambiguity is exactly where the model falls
 back on whatever the system prompt told it about how to behave.
-
-## Git tags
-
-- Start: `lesson-02-system-prompt-start` (`7000094`) — repo state
-  before lesson 02 or 03 code existed. **Note:** this is the shared
-  starting point for both lessons 02 and 03 — they were both
-  introduced in the same later commit, so there is no historical way
-  to isolate "before 02" from "before 03" individually.
-- Done: `lesson-02-system-prompt-done` (`b2e6ccd`) — finished code +
-  docs

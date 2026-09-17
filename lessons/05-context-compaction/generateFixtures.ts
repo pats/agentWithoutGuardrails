@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const SANDBOX_DIR = process.argv[2] ?? 'sandbox/04-token-counting'; // pass a target dir to reuse this generator for other lessons
+const SANDBOX_DIR = process.argv[2] ?? 'lessons/05-context-compaction/sandbox'; // pass a target dir to reuse this generator for other lessons
 
 // Fake log-style content — angielski, powtarzalny ale nie identyczny (żeby nie kompresowało się do jednego tokena)
 function generateEnglishLog(lines: number): string {

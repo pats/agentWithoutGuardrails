@@ -1,6 +1,6 @@
 # 05 — Proactive Context Compaction
 
-**File:** `src/lessons/contextWindowManagement.ts`
+**File:** `contextWindowManagement.ts` (this folder)
 **Helper:** `src/contextCompaction.ts` (`compactHistory()`)
 
 ## Goal
@@ -16,7 +16,7 @@ otherwise crash.
 Lesson 04 completed. Sandbox fixtures, isolated to this lesson:
 
 ```bash
-pnpm exec tsx src/lessons/generateFixtures.ts sandbox/05-context-compaction
+pnpm exec tsx lessons/05-context-compaction/generateFixtures.ts
 ```
 
 ## Run
@@ -50,7 +50,7 @@ shape as lesson 04, regenerated into this lesson's own sandbox.
 | 9         |   353,022 | 547,532 | reads all 3 again → **compaction fires** → 1,155 tokens |
 | 10        |       810 |   1,274 | `list_files` again — loop cap reached |
 
-**The task never completed.** `sandbox/05-context-compaction/summary.txt`
+**The task never completed.** `lessons/05-context-compaction/sandbox/summary.txt`
 was never written. The agent repeated the same list → read → compact
 cycle for all 10 iterations. Every compaction summary claimed no prior
 work existed (e.g. *"No prior work has been done on this task"*, *"No
@@ -84,10 +84,3 @@ never mid-JSON) or summarize each large `tool_result` individually as
 it's added to history, before the transcript ever gets this large.
 Re-run this same experiment afterward and confirm `summary.txt` is
 actually written.
-
-## Git tags
-
-- Start: `lesson-05-context-compaction-start` (`ed4e871`) — repo state
-  right before this lesson's code existed (still inside `tokenCounting.ts`)
-- Done: `lesson-05-context-compaction-done` — tag this after committing
-  the split (`split-lesson-05.sh`) and this write-up
