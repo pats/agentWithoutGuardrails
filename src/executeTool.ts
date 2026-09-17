@@ -3,7 +3,8 @@ import { isProtectedFile } from './protectedFiles.js';
 import { isPathSafe } from './security.js';
 import { ListFilesInput, ReadFileInput, WriteFileInput } from './tools.js';
 
-const MAX_FILE_CONTENT_CHARS = 20_000; // ~5k tokenów, do dostrojenia
+const MAX_FILE_CONTENT_CHARS = 500_000; // reverted after testing the 150k compaction threshold
+// against large, non-truncated fixtures (see docs/lessons — compaction test run)
 
 export async function executeTool(name: string, input: unknown): Promise<string> {
   if (name === 'read_file') {
