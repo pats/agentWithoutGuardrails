@@ -22,9 +22,12 @@ agent-loop code has caused real file damage before (see `docs/incidents.md`).
 2. `src/security.ts` and `src/protectedFiles.ts` are independent, layered
    defenses. Don't suggest consolidating them into one check — see the
    incident log for why the separation matters.
-3. `sandbox/` holds disposable fake files for destructive testing. Never
-   suggest running exploratory or destructive agent behavior against real
-   project files (`notes.txt`, `.env`). This already happened once.
+3. `sandbox/<NN-lesson-name>/` holds disposable fake files for destructive
+   testing, scoped one directory per lesson — never share a sandbox
+   directory across lessons (see `docs/incidents.md`, Incident 5) and
+   never suggest running exploratory or destructive agent behavior
+   against real project files (`notes.txt`, `.env`). This already
+   happened once.
 4. `src/lessons/` are standalone teaching scripts, each with a matching
    write-up in `docs/lessons/`. They intentionally duplicate some logic
    from `src/` rather than importing it, to stay self-contained and
@@ -35,4 +38,9 @@ agent-loop code has caused real file damage before (see `docs/incidents.md`).
 - Code, comments, error messages, and docs are in English.
 - Package manager is pnpm — don't suggest npm or yarn commands/lockfiles.
 - Formatting and linting via Biome (`pnpm check`), not ESLint/Prettier.
-- New destructive or adversarial tests
+- New destructive or adversarial tests belong in `sandbox/<NN-lesson-name>/`,
+  never against real project files.
+- A completed lesson gets two git tags: `-start` at the commit right
+  before its code existed, `-done` at the commit where its code, docs,
+  and conclusions were finished. Tag both before moving to the next
+  lesson — see the Reproducibility section in `README.md`.

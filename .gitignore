@@ -3,4 +3,4 @@ node_modules
 dist
 .idea
 summary.txt
-sandbox/*.txt
+sandbox/**/*.txt

@@ -49,7 +49,7 @@ async function run() {
     {
       role: 'user',
       content:
-        'Read all files in the sandbox/ directory one by one and write a combined summary to sandbox/summary.txt.',
+        'Read all files in the sandbox/04-token-counting/ directory one by one and write a combined summary to sandbox/04-token-counting/summary.txt.',
     },
   ];
 

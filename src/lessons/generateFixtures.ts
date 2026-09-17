@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const SANDBOX_DIR = 'sandbox';
+const SANDBOX_DIR = 'sandbox/04-token-counting';
 
 // Fake log-style content — angielski, powtarzalny ale nie identyczny (żeby nie kompresowało się do jednego tokena)
 function generateEnglishLog(lines: number): string {

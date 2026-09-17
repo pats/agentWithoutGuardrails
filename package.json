@@ -7,7 +7,11 @@
     "dev": "tsx src/index.ts",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "lesson:01": "tsx src/lessons/streaming.ts",
+    "lesson:02": "tsx src/lessons/systemPrompt.ts",
+    "lesson:03": "tsx src/lessons/sandboxIncident.ts",
+    "lesson:04": "tsx src/lessons/tokenCounting.ts"
   },
   "packageManager": "pnpm@10.33.0",
   "dependencies": {

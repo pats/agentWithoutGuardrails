@@ -7,6 +7,31 @@ compare a cheap local heuristic against the exact API-based measurement, and
 empirically observe what happens when the history exceeds the model's context
 window.
 
+## Prerequisites
+
+Sandbox fixtures, isolated to this lesson's own subdirectory (never reuse
+`sandbox/03-sandbox-incident/` here — that's what caused Incident 5, see
+`docs/incidents.md`):
+
+```bash
+pnpm exec tsx src/lessons/generateFixtures.ts
+```
+
+This writes `access-log-en.txt`, `access-log-pl.txt`, and
+`audit-log-en.txt` into `sandbox/04-token-counting/`.
+
+## Before
+
+Hypothesis / what to expect, before running:
+
+- The 4:1 char/token heuristic will roughly track the real count for
+  prose, but likely diverge for JSON-heavy content (`tools`, message
+  structure)
+- Reading several thousand-line log files in one step could plausibly
+  push the conversation history toward the model's context limit
+- If the limit is hit, the loop's error handling has never been
+  tested against that specific failure — outcome unknown
+
 ## Method A: local heuristic
 
 Zero-network-call approximation based on the "~4 characters = 1 token" rule:
@@ -38,12 +63,12 @@ messages) minus `max_tokens`, returns exact `input_tokens` without generating
 a response. Not billed (no output tokens generated) — the cost is extra
 round-trip latency, not money.
 
-## Experiment
+## After
 
 Sandbox: three generated log-style files (`src/lessons/generateFixtures.ts`)
 — `access-log-en.txt` (4000 lines), `access-log-pl.txt` (4000 lines, same
 data shape in Polish), `audit-log-en.txt` (6000 lines). Task: read all files
-in `sandbox/` and write a combined summary.
+in `sandbox/04-token-counting/` and write a combined summary.
 
 | Iteration | Heuristic | Actual (countTokens) | Error   |
 |-----------|----------:|----------------------:|--------:|
@@ -67,11 +92,22 @@ lost** — nothing was written, since the agent never reached `write_file`.
 ## Side effect: Incident 5
 
 During this experiment the agent independently read `sandbox/.env` (a file
-left over from an earlier exercise), because it matched the literal
-instruction "read all files." See `docs/incidents.md`, Incident 5 —
-`isProtectedFile()` only guards `write_file`, not `read_file`.
+left over from lesson 03, back when `sandbox/` was flat and shared across
+lessons), because it matched the literal instruction "read all files." See
+`docs/incidents.md`, Incident 5. Two independent things had to be true for
+this to happen, and both are now fixed separately:
 
-## Takeaways
+1. `isProtectedFile()` only guarded `write_file`, not `read_file` — fixed
+   in code (`664c90c`).
+2. `.env` was there at all only because lessons shared one `sandbox/`
+   directory with no cleanup between runs — fixed by giving each lesson
+   its own `sandbox/<NN-name>/` subdirectory (this doc's Prerequisites).
+
+Neither fix alone is sufficient: the guard stops the read even if a stray
+file is present; the isolation stops the stray file from being present in
+the first place. Defense in depth, same principle as Incident 4.
+
+## Conclusions
 
 1. The character/token heuristic is useful for rough on-the-fly monitoring,
    but too inaccurate (30-70% error observed) to base a truncation decision
@@ -96,3 +132,10 @@ instruction "read all files." See `docs/incidents.md`, Incident 5 —
 
 Implement truncation on individual `tool_result` outputs, then a proactive
 token-threshold check before `create()` — see next lesson.
+
+## Git tags
+
+- Start: `lesson-04-token-counting-start` (`dbe51ad`) — repo state
+  before this lesson's code existed
+- Done: `lesson-04-token-counting-done` (`be8318e`) — finished code +
+  docs
