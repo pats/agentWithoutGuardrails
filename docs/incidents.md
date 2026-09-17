@@ -117,3 +117,52 @@ the original incident ("read all files in sandbox/") now returns
 `Error: 'sandbox/.env' is a protected file and cannot be read by this agent.`
 instead of file contents, and the agent's own summary correctly reflects
 that the file was inaccessible rather than fabricating or omitting the fact.
+## Incident 6: Compaction summary loses track of completed work, causing an infinite read-compact loop
+
+**Date**: 2026-09-17
+**Context**: `src/lessons/contextWindowManagement.ts`, lesson 05 (proactive context compaction).
+
+**What happened**:
+Running the lesson's task ("read all files in `sandbox/05-context-compaction/`,
+write a combined summary") against three large fixture files (~1.5MB combined),
+the agent repeated the same list → read → compact cycle for all 10 iterations
+without ever reaching `write_file`. Each cycle: the agent listed the directory,
+read all three files (pushing the actual token count to ~547k), compaction
+fired and reduced the history to ~1.1–1.3k tokens — but the resulting summary
+consistently claimed no work had been done yet (e.g. "No prior work has been
+done on this task", "No earlier work completed yet"), so on the next iteration
+the agent started over from `list_files`, hit the same wall, and compacted
+again. The loop terminated only because of the lesson's hardcoded 10-iteration
+cap — not because the agent recovered or the task completed.
+
+**Root cause**:
+`compactHistory()` truncates the raw `JSON.stringify(messages)` transcript to
+its last 400,000 characters before summarizing, on the theory that recent tool
+results matter most (this was itself a fix for an earlier bug — truncating
+from the start caused re-reading of already-processed files). But with three
+~500KB files read in a single parallel `Promise.all` tool-call batch, the last
+400k characters land entirely inside the raw content of the last file read
+(`audit-log-en.txt`) — cutting off the JSON structure that would identify
+*which* tool call this content came from, the original task, and the two
+earlier files entirely. The summarization model, seeing only a fragment of
+raw log lines with no framing, reasonably concludes "no work has been done" —
+it has no way to know otherwise from what it was actually given.
+
+**Fix / follow-up**:
+- Truncating a serialized transcript by raw character count is not
+  structure-aware; truncation should happen at message/tool-call boundaries,
+  never mid-JSON, so the summarizer always sees complete tool_use/tool_result
+  pairs.
+- Alternative worth testing: summarize each large `tool_result` individually
+  as it's added to history, before the transcript ever gets large enough to
+  need whole-history compaction.
+- Add a regression check: after compaction, validate that the resulting
+  summary actually references the work already done (e.g. spot-check for
+  expected filenames) before trusting it as the new history.
+
+**Lesson**:
+A context-management mechanism that reduces token count without preserving
+semantic continuity doesn't just risk losing detail — it can make the agent
+forget it did anything at all, turning a token-limit problem (crash) into an
+infinite-loop problem (silent non-termination). Token count alone is not a
+sufficient health metric for compaction; task progress needs its own check.

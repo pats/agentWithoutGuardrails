@@ -37,6 +37,7 @@ safety layers hardened in previous steps.
 | 02 | `src/lessons/systemPrompt.ts` | `docs/lessons/02-system-prompt.md` | `pnpm run lesson:02` | `lesson-02-system-prompt-start` | `lesson-02-system-prompt-done` |
 | 03 | `src/lessons/sandboxIncident.ts` | `docs/lessons/03-sandbox-incident.md` | `pnpm run lesson:03` | `lesson-03-sandbox-incident-start` | `lesson-03-sandbox-incident-done` |
 | 04 | `src/lessons/tokenCounting.ts`<br>`src/lessons/generateFixtures.ts` | `docs/lessons/04-token-counting.md` | `pnpm run lesson:04` | `lesson-04-token-counting-start` | `lesson-04-token-counting-done` |
+| 05 | `src/lessons/contextWindowManagement.ts` | `docs/lessons/05-context-compaction.md` | `pnpm run lesson:05` | `lesson-05-context-compaction-start` | `lesson-05-context-compaction-done` |
 
 Each write-up documents the goal, what was expected before running
 (**Before**), what actually happened (**After**) — including failures,
