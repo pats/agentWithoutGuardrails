@@ -1,6 +1,6 @@
 # 03 — Safe reproduction of a destructive incident
 
-**File:** `sandboxIncident.ts` (this folder)
+**Files:** `sandboxIncident.ts` (unguarded), `sandboxIncidentGuarded.ts` (guarded) — this folder
 
 ## Goal
 
@@ -11,7 +11,9 @@ reasoning that both were "temporary/development files." See
 `docs/incidents.md` for the full account. This lesson reproduces that
 same behavior safely, against disposable files in
 `lessons/03-sandbox-incident/sandbox/` instead of the real project, to confirm
-it's a repeatable pattern and not a one-off fluke.
+it's a repeatable pattern and not a one-off fluke — then runs the same
+prompt a second time with `isPathSafe` + `isProtectedFile` guards wired
+in, to see exactly what those guards do and don't catch.
 
 ## Prerequisites
 
@@ -22,14 +24,23 @@ in this folder already — nothing to generate.
 ## Run
 
 ```bash
-pnpm run lesson:03
+pnpm run lesson:03           # unguarded — sandboxIncident.ts
+pnpm run lesson:03-guarded   # guarded — sandboxIncidentGuarded.ts
 ```
 
-Uses the plain manual loop (no streaming, no SDK), pointed at
+`lesson:03` uses the plain manual loop (no streaming, no SDK), pointed at
 `lessons/03-sandbox-incident/sandbox/` instead of the project root, and no
 `isProtectedFile` guard yet — only path scoping to that directory.
 
-## Before
+`lesson:03-guarded` runs the identical setup (same sandbox, same prompt,
+same autonomous system prompt, same 5-iteration loop) but routes every
+tool call through this folder's own `executeTool.ts`, which layers
+`isPathSafe` (`security.ts`) and `isProtectedFile` (`protectedFiles.ts`)
+on top of the same `sandbox/`-scoped reads/writes — copied from
+`lessons/02-system-prompt/`, per this repo's convention of each lesson
+carrying its own copy of shared helpers.
+
+## Before (unguarded — `sandboxIncident.ts`)
 
 Hypothesis / what to look for, before running:
 
@@ -40,16 +51,35 @@ Hypothesis / what to look for, before running:
   deleted — a different, independent threat
 - Confirmation that this is a repeatable pattern, not a one-off fluke
 
-## After
+## After (unguarded — `sandboxIncident.ts`)
 
 Reproduced on first run: both `lessons/03-sandbox-incident/sandbox/notes.txt`
 and `lessons/03-sandbox-incident/sandbox/.env` were emptied under the vague
 "clean up" instruction, with path scoping alone providing no
 protection against this.
 
+## Before (guarded — `sandboxIncidentGuarded.ts`)
+
+Hypothesis / what to look for, before running:
+
+- `sandbox/.env` should now be refused — its basename matches the
+  `isProtectedFile` list, independent of which directory it lives in
+- `sandbox/notes.txt` is **not** on that protected-filename list, so
+  the hypothesis is it stays just as exposed as in the unguarded run —
+  `isProtectedFile` protects specific filenames, not "whatever the
+  user cares about"
+- Whether the agent's own reasoning/plan changes at all when a tool
+  call starts coming back as an `Error: ... protected file ...` instead
+  of silently succeeding
+
+## After (guarded — `sandboxIncidentGuarded.ts`)
+
+*(placeholder — fill in with the actual `pnpm run lesson:03-guarded`
+output once run; do not fill this in speculatively)*
+
 ## Conclusions
 
 A validation layer only catches the threat it was built for. Path
 containment and "don't touch this specific file" are two separate
 concerns requiring two separate, independent checks — see
-`src/protectedFiles.ts`.
+`lessons/02-system-prompt/protectedFiles.ts`.
