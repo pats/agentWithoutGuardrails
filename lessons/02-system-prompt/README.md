@@ -22,7 +22,12 @@ pnpm run lesson:02
 This sends the identical task ("read notes.txt, write a summary")
 through the same manual loop twice, changing only `system`: once with
 a cautious, explain-first prompt, once with an autonomous,
-act-without-asking prompt.
+act-without-asking prompt. The task now targets this lesson's own
+`sandbox/notes.txt` (committed in this folder) instead of the real
+project `notes.txt` — the same real-file exposure that caused Incident
+1/2 in `docs/incidents.md` (see lesson 03), now closed off here too.
+`sandbox/summary.txt` is written and read back by `pnpm run lesson:02`
+itself, not committed.
 
 ## Before
 

@@ -11,7 +11,11 @@ internally; it just waits for the stream to finish before returning.
 
 ## Prerequisites
 
-None — first lesson in the sequence.
+None — first lesson in the sequence. Uses its own `sandbox/notes.txt`
+fixture (committed in this folder) rather than a real project file —
+this lesson never actually executes the tool call it streams, but it's
+sandboxed anyway to keep the convention consistent across lessons (see
+lesson 03 for why real files are off-limits for agent experiments).
 
 ## Run
 
