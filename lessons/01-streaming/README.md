@@ -1,7 +1,7 @@
 # 01 — Token-level streaming
 
-**Files:** `nonStreaming.ts` (before — blocking `messages.create()`),
-`streaming.ts` (after — `messages.stream()`) — this folder
+**Files:** `streamingBefore.ts` (before — blocking `messages.create()`),
+`streamingAfter.ts` (after — `messages.stream()`) — this folder
 
 ## Goal
 
@@ -22,14 +22,14 @@ lesson 03 for why real files are off-limits for agent experiments).
 ## Run
 
 ```bash
-pnpm run lesson:01-non-streaming   # before — client.messages.create()
-pnpm run lesson:01                 # after — client.messages.stream()
+pnpm run lesson:01-before   # client.messages.create()
+pnpm run lesson:01-after    # client.messages.stream()
 ```
 
 Both send the identical prompt, model, and tool definitions — the only
 difference is whether the SDK call is blocking or streaming.
 
-## Before (before — `nonStreaming.ts`)
+## Before (before — `streamingBefore.ts`)
 
 Hypothesis / what to look for, before running:
 
@@ -39,14 +39,14 @@ Hypothesis / what to look for, before running:
   streaming's `finalMessage()` assembles, just arrived at without any
   of the intermediate events
 
-## After (before — `nonStreaming.ts`)
+## After (before — `streamingBefore.ts`)
 
 Confirmed: `messages.create()` returns nothing until the full response
 (including any tool-call JSON) is generated — stdout prints only the
 final `message.content`, with no partial text or partial-JSON visible
 at any point before that.
 
-## Before (after — `streaming.ts`)
+## Before (after — `streamingAfter.ts`)
 
 Hypothesis / what to look for, before running:
 
@@ -54,14 +54,14 @@ Hypothesis / what to look for, before running:
 - `input_json_delta` events showing a tool's JSON arguments arriving in
   broken pieces (e.g. `{"pat`, `h": "note`, `s.txt"}`)
 - `finalMessage()` assembling everything into the same shape as the
-  non-streamed response from `nonStreaming.ts`
+  non-streamed response from `streamingBefore.ts`
 
-## After (after — `streaming.ts`)
+## After (after — `streamingAfter.ts`)
 
 Confirmed: text streamed token-by-token, tool-call JSON arrived in
 fragments and had to be reassembled, and `finalMessage()` produced a
 result shape identical to the non-streamed `messages.create()` call
-in `nonStreaming.ts`.
+in `streamingBefore.ts`.
 
 ## Conclusions
 

@@ -57,18 +57,19 @@ closest existing lesson as your template. Every lesson folder — past
 or future, main curriculum or deep-dive track — must contain all of
 the following:
 
-1. **Two TypeScript entry points, before and after.** One script (or,
-   where setup is heavily shared, one exported function per variant in
-   a single file — see `lessons/05-context-compaction/contextWindowManagement.ts`)
-   showing the naive/unguarded/unoptimized behavior, and a second
-   showing the same task after the fix/guard/optimization is applied —
-   each runnable independently via its own `npm`/`pnpm` script (e.g.
-   `lesson:NN` / `lesson:NN-guarded`, or `lesson:NN-with-x` /
-   `lesson:NN-without-x`), so both outcomes are directly comparable.
-   Reference implementations: `lessons/03-sandbox-incident/`
-   (`sandboxIncident.ts` vs `sandboxIncidentGuarded.ts`) and
-   `lessons/05-context-compaction/` (`runWithCompaction()` vs
-   `runWithoutCompaction()`).
+1. **Two TypeScript entry points, before and after, named accordingly.**
+   Two files, `<name>Before.ts` and `<name>After.ts` (where setup is
+   heavily shared between them, factor it into a local helper both
+   import — see `lessons/05-context-compaction/tokenEstimation.ts`),
+   the first showing the naive/unguarded/unoptimized behavior and the
+   second showing the same task after the fix/guard/optimization is
+   applied — each runnable independently via its own `pnpm` script,
+   always named `lesson:NN-before` / `lesson:NN-after`, so both
+   outcomes are directly comparable. Reference implementations:
+   `lessons/03-sandbox-incident/` (`sandboxIncidentBefore.ts` vs
+   `sandboxIncidentAfter.ts`) and `lessons/05-context-compaction/`
+   (`contextWindowManagementBefore.ts`'s `runWithoutCompaction()` vs
+   `contextWindowManagementAfter.ts`'s `runWithCompaction()`).
 2. **A dedicated `sandbox/` directory inside the lesson's own folder**,
    with committed example/fixture files or a generator script
    (`generateFixtures.ts`) that produces them. Never point at another

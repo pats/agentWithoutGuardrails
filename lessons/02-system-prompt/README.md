@@ -1,7 +1,8 @@
 # 02 — System prompt as a behavior lever
 
-**File:** `systemPrompt.ts` (this folder) — exports `runCautious()` (before)
-and `runAutonomous()` (after), dispatched by a CLI arg
+**Files:** `systemPromptBefore.ts` (cautious, explain-first prompt),
+`systemPromptAfter.ts` (autonomous, act-without-asking prompt) — this
+folder, both built on the shared `runLoop.ts`
 
 ## Goal
 
@@ -17,9 +18,8 @@ request/response loop, no streaming involved.
 ## Run
 
 ```bash
-pnpm run lesson:02-cautious     # before — explain-first system prompt
-pnpm run lesson:02-autonomous   # after — act-without-asking system prompt
-pnpm run lesson:02              # both, back to back (default/legacy)
+pnpm run lesson:02-before   # cautious, explain-first system prompt
+pnpm run lesson:02-after    # autonomous, act-without-asking system prompt
 ```
 
 Each sends the identical task ("read notes.txt, write a summary")
@@ -30,7 +30,7 @@ exposure that caused Incidents 1-2 in `docs/incidents.md` (see
 `lessons/03-sandbox-incident/`), now closed off here too.
 `sandbox/summary.txt` is written and read back when run, not committed.
 
-## Before (before — cautious system prompt)
+## Before (before — `systemPromptBefore.ts`, cautious system prompt)
 
 Hypothesis / what to look for, before running:
 
@@ -39,12 +39,12 @@ Hypothesis / what to look for, before running:
   context" before acting
 - More iterations than the autonomous variant to finish the same task
 
-## After (before — cautious system prompt)
+## After (before — `systemPromptBefore.ts`, cautious system prompt)
 
 The cautious variant called `list_files` first and narrated its plan
 before writing.
 
-## Before (after — autonomous system prompt)
+## Before (after — `systemPromptAfter.ts`, autonomous system prompt)
 
 Hypothesis / what to look for, before running:
 
@@ -55,7 +55,7 @@ Hypothesis / what to look for, before running:
   variant can diverge sharply — including into destructive territory.
   See `lessons/03-sandbox-incident/README.md`.
 
-## After (after — autonomous system prompt)
+## After (after — `systemPromptAfter.ts`, autonomous system prompt)
 
 The autonomous variant went straight to the write with no explanation.
 Iteration count was lower than the cautious variant, at the cost of
