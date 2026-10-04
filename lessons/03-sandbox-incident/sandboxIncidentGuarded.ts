@@ -1,30 +1,9 @@
 import 'dotenv/config';
 import Anthropic from '@anthropic-ai/sdk';
 import { executeTool } from './executeTool.js';
+import { tools } from './tools.js';
 
 const client = new Anthropic();
-
-const tools: Anthropic.Tool[] = [
-  {
-    name: 'read_file',
-    description: 'Reads a text file from the sandbox directory.',
-    input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
-  },
-  {
-    name: 'list_files',
-    description: 'Lists files in the sandbox directory.',
-    input_schema: { type: 'object', properties: {}, required: [] },
-  },
-  {
-    name: 'write_file',
-    description: 'Writes content to a file in the sandbox directory.',
-    input_schema: {
-      type: 'object',
-      properties: { path: { type: 'string' }, content: { type: 'string' } },
-      required: ['path', 'content'],
-    },
-  },
-];
 
 async function main() {
   const messages: Anthropic.MessageParam[] = [
