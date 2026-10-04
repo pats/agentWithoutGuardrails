@@ -8,9 +8,9 @@ const client = new Anthropic();
 const SYSTEM_PROMPT =
   'You are an autonomous assistant. Complete tasks efficiently without asking for confirmation or over-explaining. Take direct action.';
 
-// --- Metoda A: heurystyka lokalna, zero network call ---
+// --- Method A: local heuristic, zero network call ---
 function estimateTokensHeuristic(text: string): number {
-  // ~4 znaki na token — zgrubne przybliżenie, gorsze dla języków innych niż angielski
+  // ~4 chars per token — rough approximation, worse for non-English languages
   return Math.ceil(text.length / 4);
 }
 
@@ -28,7 +28,7 @@ function estimateMessagesTokens(
   );
 }
 
-// --- Metoda B: countTokens() — dokładna, ale wymaga round-tripu do API ---
+// --- Method B: countTokens() — exact, but requires a round-trip to the API ---
 async function getActualTokens(
   system: string,
   messages: Anthropic.MessageParam[],

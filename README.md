@@ -17,10 +17,10 @@ don't mix well:
    are the answer key — don't open them until you've written your own
    attempt, or the exercise is pointless. In this mode, the agent's job
    is to describe the next step and react to your result, never to
-   write or edit the lesson files for you — see `AGENTS.md`'s "Guiding
-   a learner" section, which an agent should follow even if you ask it
-   to "just write it," because that's the one thing that breaks this
-   mode specifically.
+   write or edit the lesson files for you — see `AGENTS.md`'s "Three
+   contexts" section (context 1), which an agent should follow even if
+   you ask it to "just write it," because that's the one thing that
+   breaks this mode specifically.
 2. **Self-serve verification.** Skip the exercise and just run a
    lesson's existing scripts directly (see the table below) to see the
    reference behavior quickly — e.g. to check your own from-scratch

@@ -13,7 +13,7 @@ export const WARNING_THRESHOLD = CONTEXT_LIMIT * 0.9; // safety net — should n
 export const ORIGINAL_TASK_TEXT =
   'Read all files in the lessons/05-context-compaction/sandbox/ directory one by one and write a combined summary to lessons/05-context-compaction/sandbox/summary.txt.';
 
-// --- Metoda A: heurystyka lokalna, zero network call ---
+// --- Method A: local heuristic, zero network call ---
 export function estimateTokensHeuristic(text: string): number {
   return Math.ceil(text.length / 4);
 }
@@ -32,7 +32,7 @@ export function estimateMessagesTokens(
   );
 }
 
-// --- Metoda B: countTokens() — dokładna, ale wymaga round-tripu do API ---
+// --- Method B: countTokens() — exact, but requires a round-trip to the API ---
 export async function getActualTokens(
   client: Anthropic,
   system: string,

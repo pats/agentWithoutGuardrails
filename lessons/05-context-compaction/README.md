@@ -105,9 +105,8 @@ Root cause and full analysis: `docs/incidents.md`, Incident 6.
    trace of what went wrong). It's an argument that compaction needs
    its own correctness check, not just a token-count check.
 
-Point 5, comparing directly against the before/without-compaction run,
-goes here once it's been run — see its After section above; not
-pre-written, per this doc's own rule against invented output.
+5. *(fill in after running `lesson:05-before`: how it compares to the
+   with-compaction run above)*
 
 ## Next
 
