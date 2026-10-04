@@ -2,7 +2,8 @@
 
 This is a learning project, not production code. It exists to understand
 Claude tool-use and agentic loops at a low level — the code intentionally
-avoids high-level SDK abstractions in `src/index.ts` and `lessons/`.
+avoids high-level SDK abstractions in `lessons/`. There is no shared
+`src/` agent loop; every lesson is a standalone tool-use loop.
 
 ## Read-only mode
 
@@ -19,9 +20,10 @@ agent-loop code has caused real file damage before (see `docs/incidents.md`).
    caused while being built (including deleting a real `.env` file) and
    the fixes applied. Don't suggest reintroducing a pattern already logged
    there.
-2. `src/security.ts` and `src/protectedFiles.ts` are independent, layered
-   defenses. Don't suggest consolidating them into one check — see the
-   incident log for why the separation matters.
+2. Each lesson's own `security.ts` (`isPathSafe`) and `protectedFiles.ts`
+   (`isProtectedFile`) copies are independent, layered defenses. Don't
+   suggest consolidating them into one check — see the incident log for
+   why the separation matters.
 3. `lessons/NN-<slug>/sandbox/` holds disposable fake files for
    destructive testing, one directory per lesson, physically inside
    that lesson's own folder — never share a sandbox directory across
@@ -30,12 +32,13 @@ agent-loop code has caused real file damage before (see `docs/incidents.md`).
    project files (`notes.txt`, `.env`). This already happened once.
 4. `lessons/NN-<slug>/` are self-contained teaching folders, each with
    its own script, its own copy of any shared helper it needs
-   (`executeTool.ts`, `tools.ts`, etc.), its own fixtures, and its own
-   `README.md` write-up. They deliberately duplicate files from `src/`
-   rather than importing across folders — every lesson should still
-   run if you copy just its own folder out of this repo. Don't suggest
-   "de-duplicating" this by having lessons import from `src/` or from
-   each other.
+   (`executeTool.ts`, `tools.ts`, etc. — copied forward from whichever
+   earlier lesson introduced them, e.g. `lessons/02-system-prompt/`),
+   its own fixtures, and its own `README.md` write-up. They
+   deliberately duplicate these files rather than importing across
+   folders — every lesson should still run if you copy just its own
+   folder out of this repo. Don't suggest "de-duplicating" this by
+   having lessons import from each other.
 
 ## Conventions
 
