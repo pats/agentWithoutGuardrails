@@ -23,8 +23,11 @@ pnpm dev
   depends on, its own fixtures, its own `README.md` write-up). Nothing
   in `lessons/` imports from outside its own folder — you could copy
   any single `lessons/NN-<slug>/` folder out of this repo and it would
-  still run.
+  still run. See `AGENTS.md`'s "Lesson requirements" for the exact
+  required contents (before/after scripts, dedicated `sandbox/`,
+  README structure).
 - `docs/incidents.md` — dangerous agent behavior observed while building this
+- `docs/plan/` — specs for planned extensions, written before any code exists
 
 ## Lessons
 
@@ -41,11 +44,37 @@ each folder is technically self-contained and duplicates what it needs.
 | 04 | `lessons/04-token-counting/` | `pnpm run lesson:04` |
 | 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05` |
 
-Each lesson's `README.md` documents the goal, what was expected before
-running (**Before**), what actually happened (**After**) — including
-failures, e.g. lesson 04's context-limit crash and lesson 05's
-compaction loop — and the conclusions carried forward into later
-lessons or into `docs/incidents.md`.
+Each lesson has two runnable entry points — one naive/unguarded, one
+after the fix or optimization — and its own `README.md` documenting
+the goal, what was expected before running each (**Before**), what
+actually happened (**After**) — including failures, e.g. lesson 04's
+context-limit crash and lesson 05's compaction loop — and the
+conclusions carried forward into later lessons or into
+`docs/incidents.md`. Full requirements: `AGENTS.md`.
+
+## Planned: deep-dive tracks
+
+Extensions to the main curriculum, going below the Claude API/SDK level
+(local inference, raw protocols, infra). Full spec:
+`docs/plan/deep-dive-tracks.md`. Not yet implemented — no `lessons/NN-<slug>/`
+folders exist for these; code will live under `src/lessons/ollama/` and
+`src/lessons/<tool>/`, docs under `docs/lessons/`, intentionally separate
+from the `lessons/NN-<slug>/` folder naming used by lessons 01–05, though
+the same lesson requirements apply (see `AGENTS.md`).
+
+| Track | Title | Depends on | Status |
+|---|---|---|---|
+| O1 | Chat template | Ollama installed | planned |
+| O2 | Tokenization & sampling | O1 | planned |
+| O3 | KV cache & context window | O1 | planned |
+| O4 | Loop portability / provider adapter | Stage 1 loop, O1–O3 | planned |
+| T1 | llama.cpp (GGUF, quantization, grammars) | O1 | planned |
+| T2 | Raw MCP (JSON-RPC over stdio/HTTP) | Lesson 10 | planned |
+| T3 | Sandboxing & process isolation | Stage 1 loop | planned |
+| T4 | Observability (OpenTelemetry) | Stage 1 loop | planned |
+| T5 | pgvector / embeddings | Stage 3–4 | planned |
+| T6 | Temporal / durable execution | Stage 3–4 | planned |
+| T7 | vLLM (NVIDIA only) | O3 | planned, conditional |
 
 ### Reproducibility
 
@@ -63,8 +92,6 @@ expected to happen), not a literal snapshot of an empty file.
 - `pnpm dev` — run the main agent loop
 - `pnpm check` — format and lint with Biome
 - `pnpm run lesson:NN` — run a specific lesson (see table above)
-- `./scripts/new-lesson.sh <NN> <kebab-slug> ["Title"]` — scaffold a new
-  lesson folder
 
 ## Safety notes
 

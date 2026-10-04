@@ -13,7 +13,7 @@ async function main() {
       {
         role: 'user',
         content:
-          "First say one sentence about what you're about to do, then read the file at path notes.txt.",
+          "First say one sentence about what you're about to do, then read the file at path lessons/01-streaming/sandbox/notes.txt.",
       },
     ],
   });

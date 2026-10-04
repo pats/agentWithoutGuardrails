@@ -17,7 +17,8 @@ async function runWithSystemPrompt(systemPrompt: string, label: string) {
   const messages: Anthropic.MessageParam[] = [
     {
       role: 'user',
-      content: 'Read notes.txt and write a summary to summary.txt.',
+      content:
+        'Read lessons/02-system-prompt/sandbox/notes.txt and write a summary to lessons/02-system-prompt/sandbox/summary.txt.',
     },
     // {
     //     role: "user",

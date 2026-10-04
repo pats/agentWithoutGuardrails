@@ -1,7 +1,8 @@
 # 05 — Proactive Context Compaction
 
-**File:** `contextWindowManagement.ts` (this folder)
-**Helper:** `src/contextCompaction.ts` (`compactHistory()`)
+**File:** `contextWindowManagement.ts` (this folder) — exports `runWithCompaction()`
+and `runWithoutCompaction()`
+**Helper:** `contextCompaction.ts` (`compactHistory()`)
 
 ## Goal
 
@@ -9,7 +10,9 @@ Lesson 04 showed a hard crash at the real 200k-token context limit, with
 all progress lost. This lesson implements *proactive* compaction —
 summarize the history before the limit is hit, not after — and checks
 whether that actually lets the agent complete a task that would
-otherwise crash.
+otherwise crash. It also runs the same task with compaction switched
+off, to see directly what compaction does and doesn't prevent, rather
+than only inferring it from lesson 04.
 
 ## Prerequisites
 
@@ -22,16 +25,27 @@ pnpm exec tsx lessons/05-context-compaction/generateFixtures.ts
 ## Run
 
 ```bash
-pnpm run lesson:05
+pnpm run lesson:05-with-compaction     # runWithCompaction() — 10-iteration cap
+pnpm run lesson:05-without-compaction  # runWithoutCompaction() — 15-iteration cap
 ```
 
-## Before
+`pnpm run lesson:05` still exists and is equivalent to
+`lesson:05-with-compaction` (default mode, kept for backward
+compatibility with earlier notes referencing it).
+
+`runWithoutCompaction()` is identical to `runWithCompaction()` — same
+task, same loop, same thresholds logged — except it never calls
+`compactHistory()`. Its iteration cap is raised from 10 to 15 to give it
+a realistic chance of actually hitting the real 200k-token limit (a hard
+400 error, as in lesson 04) instead of just stopping early on the cap.
+
+## Before (with compaction)
 
 Hypothesis, before running: proactive compaction at 75% of the context
 limit (150,000 tokens) should keep the agent under the real 200k wall
 and let it finish the task, instead of crashing the way lesson 04 did.
 
-## After
+## After (with compaction)
 
 Fixtures: `access-log-en.txt` (431.3 KB, 4000 lines), `access-log-pl.txt`
 (484.4 KB, 4000 lines), `audit-log-en.txt` (647.0 KB, 6000 lines) — same
@@ -56,6 +70,23 @@ cycle for all 10 iterations. Every compaction summary claimed no prior
 work existed (e.g. *"No prior work has been done on this task"*, *"No
 earlier work completed yet"*) — so each cycle restarted from scratch.
 Root cause and full analysis: `docs/incidents.md`, Incident 6.
+
+## Before (without compaction)
+
+Hypothesis, before running: with `compactHistory()` never called, the
+heuristic/actual token counts should climb past the 150k compaction
+threshold (and past the `WARNING_THRESHOLD` at 90%) uninterrupted —
+same growth curve the "with compaction" run showed right up to its
+first compaction event, but continuing instead of resetting. With three
+~1.5MB combined fixtures read every cycle the loop repeats, this should
+realistically hit the real 200k-token limit (a hard 400 error) within
+the 15-iteration cap, rather than completing the task or stopping on
+the cap the way the compacted run did.
+
+## After (without compaction)
+
+*(placeholder — fill in with the actual `pnpm run lesson:05-without-compaction`
+output once run; do not fill this in speculatively)*
 
 ## Conclusions
 
