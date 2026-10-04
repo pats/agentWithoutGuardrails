@@ -1,12 +1,9 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
-import { z } from 'zod';
 import { isProtectedFile } from './protectedFiles.js';
 import { isPathSafe } from './security.js';
+import { ReadFileInput, WriteFileInput } from './tools.js';
 
 const SANDBOX_DIR = 'lessons/03-sandbox-incident/sandbox';
-
-const ReadFileInput = z.object({ path: z.string() });
-const WriteFileInput = z.object({ path: z.string(), content: z.string() });
 
 // Same tool set and SANDBOX_DIR scoping as sandboxIncident.ts, but every read/write
 // now also goes through isPathSafe + isProtectedFile — the two guards added after the
