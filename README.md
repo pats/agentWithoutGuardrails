@@ -4,6 +4,28 @@ Hand-built Claude tool-use agent loops on the raw Messages API — no
 Agent SDK abstractions. Learning project for understanding agentic
 loops, tool use, and safety mechanics at a low level.
 
+## How to use this repo
+
+Two distinct ways to use it — pick one per session, they don't mix well:
+
+1. **Guided, mentor mode.** Open a chat with an agent (e.g. Claude Code)
+   with this repo attached, and have it walk you through a lesson step
+   by step: which file to create, what to name it, what it should do,
+   what command to run, what to expect. **You type the code yourself.**
+   The committed `*Before.ts`/`*After.ts` files in each lesson folder
+   are the answer key — don't open them until you've written your own
+   attempt, or the exercise is pointless. In this mode, the agent's job
+   is to describe the next step and react to your result, never to
+   write or edit the lesson files for you — see `AGENTS.md`'s "Guiding
+   a learner" section, which an agent should follow even if you ask it
+   to "just write it," because that's the one thing that breaks this
+   mode specifically.
+2. **Self-serve verification.** Skip the exercise and just run a
+   lesson's existing scripts directly (see the table below) to see the
+   reference behavior quickly — e.g. to check your own from-scratch
+   attempt against the committed one, or to just read the Before/After
+   results without typing anything.
+
 ## Setup
 
 ```bash
