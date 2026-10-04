@@ -23,7 +23,9 @@ pnpm dev
   depends on, its own fixtures, its own `README.md` write-up). Nothing
   in `lessons/` imports from outside its own folder — you could copy
   any single `lessons/NN-<slug>/` folder out of this repo and it would
-  still run.
+  still run. See `AGENTS.md`'s "Lesson requirements" for the exact
+  required contents (before/after scripts, dedicated `sandbox/`,
+  README structure).
 - `docs/incidents.md` — dangerous agent behavior observed while building this
 - `docs/plan/` — specs for planned extensions, written before any code exists
 
@@ -42,11 +44,13 @@ each folder is technically self-contained and duplicates what it needs.
 | 04 | `lessons/04-token-counting/` | `pnpm run lesson:04` |
 | 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05` |
 
-Each lesson's `README.md` documents the goal, what was expected before
-running (**Before**), what actually happened (**After**) — including
-failures, e.g. lesson 04's context-limit crash and lesson 05's
-compaction loop — and the conclusions carried forward into later
-lessons or into `docs/incidents.md`.
+Each lesson has two runnable entry points — one naive/unguarded, one
+after the fix or optimization — and its own `README.md` documenting
+the goal, what was expected before running each (**Before**), what
+actually happened (**After**) — including failures, e.g. lesson 04's
+context-limit crash and lesson 05's compaction loop — and the
+conclusions carried forward into later lessons or into
+`docs/incidents.md`. Full requirements: `AGENTS.md`.
 
 ## Planned: deep-dive tracks
 
@@ -55,8 +59,8 @@ Extensions to the main curriculum, going below the Claude API/SDK level
 `docs/plan/deep-dive-tracks.md`. Not yet implemented — no `lessons/NN-<slug>/`
 folders exist for these; code will live under `src/lessons/ollama/` and
 `src/lessons/<tool>/`, docs under `docs/lessons/`, intentionally separate
-from the `lessons/NN-<slug>/` scaffolding used by lessons 01–05 (see
-`AGENTS.md`).
+from the `lessons/NN-<slug>/` folder naming used by lessons 01–05, though
+the same lesson requirements apply (see `AGENTS.md`).
 
 | Track | Title | Depends on | Status |
 |---|---|---|---|
@@ -88,8 +92,6 @@ expected to happen), not a literal snapshot of an empty file.
 - `pnpm dev` — run the main agent loop
 - `pnpm check` — format and lint with Biome
 - `pnpm run lesson:NN` — run a specific lesson (see table above)
-- `./scripts/new-lesson.sh <NN> <kebab-slug> ["Title"]` — scaffold a new
-  lesson folder
 
 ## Safety notes
 

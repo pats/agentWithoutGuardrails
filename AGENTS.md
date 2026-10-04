@@ -45,37 +45,52 @@ agent-loop code has caused real file damage before (see `docs/incidents.md`).
 - New destructive or adversarial tests belong in
   `lessons/NN-<slug>/sandbox/`, never against real project files.
 
-## Lesson lifecycle
+## Lesson requirements
 
-Every lesson — past or future — follows the same three-stage cycle.
+No scaffolding script. Build a new lesson folder by hand, using the
+closest existing lesson as your template. Every lesson folder — past
+or future, main curriculum or deep-dive track — must contain all of
+the following:
+
+1. **Two TypeScript entry points, before and after.** One script (or,
+   where setup is heavily shared, one exported function per variant in
+   a single file — see `lessons/05-context-compaction/contextWindowManagement.ts`)
+   showing the naive/unguarded/unoptimized behavior, and a second
+   showing the same task after the fix/guard/optimization is applied —
+   each runnable independently via its own `npm`/`pnpm` script (e.g.
+   `lesson:NN` / `lesson:NN-guarded`, or `lesson:NN-with-x` /
+   `lesson:NN-without-x`), so both outcomes are directly comparable.
+   Reference implementations: `lessons/03-sandbox-incident/`
+   (`sandboxIncident.ts` vs `sandboxIncidentGuarded.ts`) and
+   `lessons/05-context-compaction/` (`runWithCompaction()` vs
+   `runWithoutCompaction()`).
+2. **A dedicated `sandbox/` directory inside the lesson's own folder**,
+   with committed example/fixture files or a generator script
+   (`generateFixtures.ts`) that produces them. Never point at another
+   lesson's `sandbox/`, a shared top-level directory, or a real
+   project file (`notes.txt`, `.env`) — see `docs/incidents.md`,
+   Incidents 1, 2, and 5.
+3. **A `README.md`** following `lessons/TEMPLATE/README.md`, with:
+   - a **Goal** section — plain description of what the lesson
+     investigates and why, motivated by the previous lesson
+   - one **Before/After** pair per entry point from (1): Before is
+     the hypothesis written *before* running anything, After is the
+     real, observed output — never invented numbers
+   - a **Conclusions** section (lessons learned) — numbered list
+     preferred over prose, carried forward into later lessons
+   - a **Next** section if there's a concrete follow-up; delete it
+     if there isn't
+4. **An incident reference, if applicable.** If running the lesson
+   produces real destructive or unsafe behavior (even confined to
+   `sandbox/`), log it in `docs/incidents.md` with root cause and fix,
+   and link to it from the lesson's `README.md` — same bar as
+   Incidents 1-6 there.
+5. Wire both new npm scripts into `package.json` and add the lesson's
+   row to the table in `README.md`.
+
 There are no git tags involved; the folder itself on `main` *is* the
-record. Use `scripts/new-lesson.sh` to scaffold a new one instead of
-doing these steps by hand.
-
-1. **Scaffold.** `./scripts/new-lesson.sh <NN> <slug> "Title"` creates
-   `lessons/NN-<slug>/` with a script stub and a `README.md` from
-   `lessons/TEMPLATE/README.md`, and wires up `package.json` +
-   top-level `README.md`.
-2. **Learn.** Write and run the experiment inside that folder — copy
-   in whatever shared files it needs (`executeTool.ts`, `tools.ts`,
-   etc.) so it stays self-contained. This is exploratory — expect to
-   iterate, and expect the first version to reveal something you
-   didn't predict (see lesson 05: the first working version of
-   compaction produced an infinite loop, not a clean success).
-3. **Finish.** Once you understand what actually happens, fix the code
-   if it needs fixing — a lesson doesn't have to end in success. An
-   honestly documented failure with root-cause analysis is a valid,
-   often more valuable, output; log it in `docs/incidents.md` if it's
-   a real incident, same as any other. Fill in the folder's
-   `README.md`: Goal, Prerequisites, Run, **Before** (hypothesis,
-   written before you saw the result), **After** (what actually
-   happened, real numbers/output, never invented ones), **Conclusions**,
-   and **Next** if there's a follow-up. Commit the finished folder as
-   one commit and push.
-
-There's nothing further to tag or checkout: the folder as it sits on
-`main` right now is simultaneously the only copy and the permanent
-record. See the Reproducibility section in `README.md`.
+record — nothing further to tag or checkout. See the Reproducibility
+section in `README.md`.
 - A completed lesson gets two git tags: `-start` at the commit right
   before its code existed, `-done` at the commit where its code, docs,
   and conclusions were finished. Tag both before moving to the next
@@ -86,11 +101,10 @@ record. See the Reproducibility section in `README.md`.
 `docs/plan/deep-dive-tracks.md` specs out extensions below the Claude
 API/SDK level (local inference via Ollama, raw MCP, sandboxing, etc.),
 listed in `README.md` under "Planned: deep-dive tracks". These
-intentionally do **not** use `lessons/NN-<slug>/` or `scripts/new-lesson.sh`
-— their code goes under `src/lessons/ollama/` (and `src/lessons/<tool>/`
+intentionally do **not** use the `lessons/NN-<slug>/` folder naming —
+their code goes under `src/lessons/ollama/` (and `src/lessons/<tool>/`
 for the other tracks) and their docs under `docs/lessons/ollama-0N-*.md`,
-per the spec. Same rules still apply: self-contained, no real project
-files, destructive/agentic experiments confined to a `sandbox/` inside
-the track's own folder, Before/After/Conclusions documented honestly.
-Don't run `new-lesson.sh` for these or suggest folding them into the
-`lessons/NN-<slug>/` numbering.
+per the spec. The "Lesson requirements" above still apply in full
+(before/after entry points, dedicated `sandbox/`, README structure,
+incident references) — only the folder location differs. Don't suggest
+folding them into the `lessons/NN-<slug>/` numbering.
