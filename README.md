@@ -6,7 +6,8 @@ loops, tool use, and safety mechanics at a low level.
 
 ## How to use this repo
 
-Two distinct ways to use it — pick one per session, they don't mix well:
+Two distinct ways to *use* it as a learner — pick one per session, they
+don't mix well:
 
 1. **Guided, mentor mode.** Open a chat with an agent (e.g. Claude Code)
    with this repo attached, and have it walk you through a lesson step
@@ -25,6 +26,12 @@ Two distinct ways to use it — pick one per session, they don't mix well:
    reference behavior quickly — e.g. to check your own from-scratch
    attempt against the committed one, or to just read the Before/After
    results without typing anything.
+
+**In neither of these does an agent write to anything under `lessons/`.**
+Actually editing or composing lesson content (fixing a lesson, adding
+one, renaming files, the kind of change this repo's own history is
+full of) is a third, separate context — repo maintenance, not use —
+see `AGENTS.md`.
 
 ## Setup
 

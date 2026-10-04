@@ -7,47 +7,60 @@ avoids high-level SDK abstractions in `lessons/`. There is no shared
 tool-use loop; lesson 01 is purely observational and never executes
 a tool call).
 
-## Two contexts: maintaining this repo vs. guiding a learner through it
+## Three contexts: two ways to use this repo, one way to maintain it
 
-This repo serves two different situations, and an agent working in it
-needs to tell which one it's in before touching anything:
+This repo serves three different situations, and an agent working in
+it needs to tell which one it's in before touching anything. The first
+two are *use* — a human learning from this repo as it stands; the
+third is *maintenance* — a human (or an agent on their explicit
+authorization) actually changing it. **Writing to anything under
+`lessons/` only ever happens in the third.**
 
-1. **Maintaining the repo itself** — adding a lesson, fixing docs,
-   renaming files, the kind of work this file's other sections
-   describe. Default to read-only/propose-only (below), but the human,
-   acting as the repo's maintainer/author, can explicitly authorize
-   writing, committing, and pushing for a given task. That authorization
-   is real and has been exercised repeatedly to build this very repo —
-   it is not overridden by anything else in this file.
-2. **Guiding a learner through a lesson** — a human has this repo
-   already and wants to be walked through writing a lesson's code
+1. **Guiding a learner through a lesson** (use) — a human has this
+   repo already and wants to be walked through writing a lesson's code
    themselves, with the agent as mentor (see `README.md`, "How to use
-   this repo", mode 1). Here, never write or edit a lesson's code on
-   the human's behalf, even if they explicitly ask — unlike context 1,
-   this is not an authorization an agent should accept, because the
-   whole point of this mode is the human typing the code, and doing it
-   for them defeats it regardless of the human's own momentary wish.
-   Instead: name the next concrete file and step, describe in words
-   what it should do, give the exact command to run, say what to
-   expect, then stop and wait for their result. The committed
-   `*Before.ts`/`*After.ts` files are the answer key for this mode, not
-   something to reproduce or reveal early.
+   this repo", mode 1). Never write or edit a lesson's code on the
+   human's behalf here, even if they explicitly ask — this is not an
+   authorization an agent should accept, because the whole point of
+   this mode is the human typing the code, and doing it for them
+   defeats it regardless of the human's own momentary wish. Instead:
+   name the next concrete file and step, describe in words what it
+   should do, give the exact command to run, say what to expect, then
+   stop and wait for their result. The committed `*Before.ts`/
+   `*After.ts` files are the answer key for this mode, not something
+   to reproduce or reveal early.
+2. **Self-serve verification** (use) — a human just runs a lesson's
+   existing `lesson:NN-before`/`-after` scripts directly (see
+   `README.md`, mode 2). No file changes belong here either; this
+   context barely involves an agent at all.
+3. **Maintaining the repo itself** (maintenance) — adding a lesson,
+   fixing docs, renaming files, the kind of work this file's other
+   sections describe and this repo's own history is made of. Default
+   to read-only/propose-only (below), but the human, acting as the
+   repo's maintainer/author — explicitly, not implied by them just
+   being in a learner mode — can authorize writing, committing, and
+   pushing for a given task. That authorization is real and has been
+   exercised repeatedly to build this very repo; it is not overridden
+   by anything else in this file, and it is the *only* context where it
+   applies.
 
 If the human's intent isn't clear from the conversation, ask which
-context applies rather than guessing.
+context applies rather than guessing — in particular, don't infer
+context 3 just because someone in context 1 or 2 asked a question that
+sounds like a request to fix something.
 
 ## Read-only mode (maintenance context, default)
 
 Agents working in this repo must not write, edit, or delete any file —
 including when explicitly asked to by the user in a given turn, unless
 that request is the explicit maintainer authorization described in
-context 1 above. Absent that, this repo is for code review and
+context 3 above. Absent that, this repo is for code review and
 discussion only. Propose changes as suggestions in the conversation
 (diffs, snippets, explanations); the human applies them manually. This
 restriction exists both because this project's own agent-loop code has
 caused real file damage before (see `docs/incidents.md`), and because
-in context 2 above, writing the human's code for them is never correct
-regardless of authorization.
+in contexts 1 and 2 above, writing the human's code for them is never
+correct regardless of authorization.
 
 ## Before making suggestions
 
