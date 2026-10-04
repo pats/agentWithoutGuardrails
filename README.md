@@ -38,13 +38,13 @@ worked through **in order**, not picked at random — each one assumes
 the mechanics from earlier lessons are already understood, even though
 each folder is technically self-contained and duplicates what it needs.
 
-| # | Folder | Run |
-|---|---|---|
-| 01 | `lessons/01-streaming/` | `pnpm run lesson:01` |
-| 02 | `lessons/02-system-prompt/` | `pnpm run lesson:02` |
-| 03 | `lessons/03-sandbox-incident/` | `pnpm run lesson:03` |
-| 04 | `lessons/04-token-counting/` | `pnpm run lesson:04` |
-| 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05` |
+| # | Folder | Before | After |
+|---|---|---|---|
+| 01 | `lessons/01-streaming/` | `pnpm run lesson:01-non-streaming` | `pnpm run lesson:01` |
+| 02 | `lessons/02-system-prompt/` | `pnpm run lesson:02-cautious` | `pnpm run lesson:02-autonomous` |
+| 03 | `lessons/03-sandbox-incident/` | `pnpm run lesson:03` | `pnpm run lesson:03-guarded` |
+| 04 | `lessons/04-token-counting/` | `pnpm run lesson:04` | `pnpm run lesson:04-guarded` |
+| 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05-without-compaction` | `pnpm run lesson:05-with-compaction` |
 
 Each lesson has two runnable entry points — one naive/unguarded, one
 after the fix or optimization — and its own `README.md` documenting
@@ -74,9 +74,15 @@ the same lesson requirements apply (see `AGENTS.md`).
 | T2 | Raw MCP (JSON-RPC over stdio/HTTP) | Lesson 10 | planned |
 | T3 | Sandboxing & process isolation | Stage 1 loop | planned |
 | T4 | Observability (OpenTelemetry) | Stage 1 loop | planned |
-| T5 | pgvector / embeddings | Stage 3–4 | planned |
-| T6 | Temporal / durable execution | Stage 3–4 | planned |
+| T5 | pgvector / embeddings | — (Stage 3–4 project) | planned |
+| T6 | Temporal / durable execution | — (Stage 3–4 project) | planned |
 | T7 | vLLM (NVIDIA only) | O3 | planned, conditional |
+
+"Stage 1" above is lessons 01–05 (this repo, as it exists today).
+Stages 2–4 and lessons 06–13, referenced throughout
+`docs/plan/deep-dive-tracks.md` as dependencies/placement, are not
+planned or documented anywhere yet — treat those specific numbers as
+placeholders for a curriculum that doesn't exist beyond lesson 05.
 
 ### Reproducibility
 
@@ -92,7 +98,9 @@ expected to happen), not a literal snapshot of an empty file.
 ## Commands
 
 - `pnpm check` — format and lint with Biome
-- `pnpm run lesson:NN` — run a specific lesson (see table above)
+- `pnpm run lesson:NN[-variant]` — run a specific lesson's before/after
+  entry point (see table above, or each lesson's own `README.md` for
+  the exact script names)
 
 ## Safety notes
 

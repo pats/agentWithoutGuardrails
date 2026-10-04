@@ -1,6 +1,7 @@
 # 02 — System prompt as a behavior lever
 
-**File:** `systemPrompt.ts` (this folder)
+**File:** `systemPrompt.ts` (this folder) — exports `runCautious()` (before)
+and `runAutonomous()` (after), dispatched by a CLI arg
 
 ## Goal
 
@@ -16,37 +17,49 @@ request/response loop, no streaming involved.
 ## Run
 
 ```bash
-pnpm run lesson:02
+pnpm run lesson:02-cautious     # before — explain-first system prompt
+pnpm run lesson:02-autonomous   # after — act-without-asking system prompt
+pnpm run lesson:02              # both, back to back (default/legacy)
 ```
 
-This sends the identical task ("read notes.txt, write a summary")
-through the same manual loop twice, changing only `system`: once with
-a cautious, explain-first prompt, once with an autonomous,
-act-without-asking prompt. The task now targets this lesson's own
-`sandbox/notes.txt` (committed in this folder) instead of the real
-project `notes.txt` — the same real-file exposure that caused Incident
-1/2 in `docs/incidents.md` (see lesson 03), now closed off here too.
-`sandbox/summary.txt` is written and read back by `pnpm run lesson:02`
-itself, not committed.
+Each sends the identical task ("read notes.txt, write a summary")
+through the same manual loop, changing only `system`. The task
+targets this lesson's own `sandbox/notes.txt` (committed in this
+folder) instead of the real project `notes.txt` — the same real-file
+exposure that caused Incidents 1-2 in `docs/incidents.md` (see
+`lessons/03-sandbox-incident/`), now closed off here too.
+`sandbox/summary.txt` is written and read back when run, not committed.
 
-## Before
+## Before (before — cautious system prompt)
 
 Hypothesis / what to look for, before running:
 
-- How much text precedes each tool call in each variant
-- Whether the model calls extra tools (e.g. `list_files`) to
-  "understand context" before acting, in the cautious variant
-- Number of iterations each variant takes to finish
-- With an ambiguous instruction (e.g. "clean up this directory"
-  instead of a precise one), the two variants can diverge sharply —
-  including into destructive territory. See `03-sandbox-incident.md`.
+- More text precedes each tool call than in the autonomous variant
+- The model calls extra tools (e.g. `list_files`) to "understand
+  context" before acting
+- More iterations than the autonomous variant to finish the same task
 
-## After
+## After (before — cautious system prompt)
 
 The cautious variant called `list_files` first and narrated its plan
-before writing; the autonomous variant went straight to the write
-with no explanation. Iteration count was lower for the autonomous
-variant, at the cost of legibility.
+before writing.
+
+## Before (after — autonomous system prompt)
+
+Hypothesis / what to look for, before running:
+
+- Goes straight to the write, with little or no explanatory text
+- Fewer iterations than the cautious variant to finish the same task
+- With an ambiguous instruction (e.g. "clean up this directory"
+  instead of a precise one) instead of this lesson's precise one, this
+  variant can diverge sharply — including into destructive territory.
+  See `lessons/03-sandbox-incident/README.md`.
+
+## After (after — autonomous system prompt)
+
+The autonomous variant went straight to the write with no explanation.
+Iteration count was lower than the cautious variant, at the cost of
+legibility.
 
 ## Conclusions
 

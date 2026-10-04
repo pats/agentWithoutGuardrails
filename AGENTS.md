@@ -3,7 +3,9 @@
 This is a learning project, not production code. It exists to understand
 Claude tool-use and agentic loops at a low level — the code intentionally
 avoids high-level SDK abstractions in `lessons/`. There is no shared
-`src/` agent loop; every lesson is a standalone tool-use loop.
+`src/` agent loop; every lesson is a standalone script (most run a
+tool-use loop; lesson 01 is purely observational and never executes
+a tool call).
 
 ## Read-only mode
 

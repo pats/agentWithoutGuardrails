@@ -1,6 +1,9 @@
 # NN — <Lesson title>
 
-**File:** `<scriptFileName>.ts` (this folder)
+**Files:** `<scriptBefore>.ts` (before/naive/unguarded), `<scriptAfter>.ts`
+(after — fix/guard/optimization applied) — this folder. (Or one file
+exporting both variants, e.g. `runWithX()`/`runWithoutX()`, dispatched by
+a CLI arg — see `lessons/05-context-compaction/contextWindowManagement.ts`.)
 
 ## Goal
 
@@ -17,17 +20,21 @@ needs fixtures, generate them into `sandbox/` inside this same folder
 ## Run
 
 ```bash
-pnpm run lesson:NN
+pnpm run lesson:NN            # before/naive/unguarded
+pnpm run lesson:NN-<variant>  # after — fix/guard/optimization applied
 ```
 
-## Before
+Describe what actually differs between the two runs (same task, same
+loop — only the one thing under test changes).
+
+## Before (before/naive/unguarded — `<scriptBefore>.ts`)
 
 Hypothesis — write this **before** you run anything, not after:
 
 - What you expect to happen
 - What you're specifically watching for in the output
 
-## After
+## After (before/naive/unguarded — `<scriptBefore>.ts`)
 
 What actually happened. Real output, real numbers — never invented
 ones. If it didn't work as expected, say so plainly and explain why;
@@ -35,10 +42,23 @@ a documented failure with root-cause analysis is a valid, often more
 valuable outcome than a clean success (see lesson 05). If it produced
 a real incident, log it in `docs/incidents.md` and reference it here.
 
+## Before (after — `<scriptAfter>.ts`)
+
+Hypothesis for the fixed/guarded/optimized variant, written before
+running it — usually "this should no longer reproduce the failure
+above" plus what specifically should differ in the output.
+
+## After (after — `<scriptAfter>.ts`)
+
+Real, observed output for the fixed/guarded/optimized variant — never
+invented. Say plainly if it only partially fixes the problem, or fixes
+it in a way that introduces a new, different gap (see lesson 03:
+`isProtectedFile` blocks `.env` but not `notes.txt`).
+
 ## Conclusions
 
-What this proves or disproves. Numbered list preferred over prose —
-easier to carry forward into later lessons.
+What this proves or disproves, comparing both runs directly. Numbered
+list preferred over prose — easier to carry forward into later lessons.
 
 ## Next
 

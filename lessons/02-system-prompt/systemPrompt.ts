@@ -60,9 +60,20 @@ async function runWithSystemPrompt(systemPrompt: string, label: string) {
   }
 }
 
-async function main() {
+async function runCautious() {
   await runWithSystemPrompt(CAUTIOUS_PROMPT, 'CAUTIOUS');
+}
+
+async function runAutonomous() {
   await runWithSystemPrompt(AUTONOMOUS_PROMPT, 'AUTONOMOUS');
 }
 
-main();
+const mode = process.argv[2];
+
+if (mode === 'cautious') {
+  runCautious();
+} else if (mode === 'autonomous') {
+  runAutonomous();
+} else {
+  runCautious().then(runAutonomous);
+}

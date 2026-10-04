@@ -1,5 +1,10 @@
 # 04 — Token Counting & Context Window Limits
 
+**Files:** `tokenCounting.ts` (before — logs both token estimates but
+never acts on them), `tokenCountingGuarded.ts` (after — stops before
+`create()` instead of letting the API reject an oversized request) —
+this folder
+
 ## Goal
 
 Understand how to actually count tokens in an agent's conversation history,
@@ -20,7 +25,21 @@ pnpm exec tsx lessons/04-token-counting/generateFixtures.ts
 This writes `access-log-en.txt`, `access-log-pl.txt`, and
 `audit-log-en.txt` into `lessons/04-token-counting/sandbox/`.
 
-## Before
+## Run
+
+```bash
+pnpm run lesson:04            # before — tokenCounting.ts
+pnpm run lesson:04-guarded     # after — tokenCountingGuarded.ts
+```
+
+Both run the identical task against the identical fixtures and log the
+same heuristic-vs-actual comparison every iteration (Methods A and B
+below); `tokenCountingGuarded.ts` additionally checks the real
+(`countTokens()`) count against `CONTEXT_LIMIT` before every `create()`
+call and stops the loop cleanly if it would exceed it, instead of
+calling `create()` anyway and letting the API reject it.
+
+## Before (before — `tokenCounting.ts`)
 
 Hypothesis / what to expect, before running:
 
@@ -63,7 +82,7 @@ messages) minus `max_tokens`, returns exact `input_tokens` without generating
 a response. Not billed (no output tokens generated) — the cost is extra
 round-trip latency, not money.
 
-## After
+## After (before — `tokenCounting.ts`)
 
 Sandbox: three generated log-style files (`generateFixtures.ts` (this folder))
 — `access-log-en.txt` (4000 lines), `access-log-pl.txt` (4000 lines, same
@@ -107,6 +126,23 @@ Neither fix alone is sufficient: the guard stops the read even if a stray
 file is present; the isolation stops the stray file from being present in
 the first place. Defense in depth, same principle as Incident 4.
 
+## Before (after — `tokenCountingGuarded.ts`)
+
+Hypothesis / what to look for, before running:
+
+- The loop should stop itself, with a clear `[guard]` log line, on
+  whichever iteration's `actual` token count exceeds `CONTEXT_LIMIT`
+  (200,000) — before calling `create()`, not after
+- No unhandled `BadRequestError` this time; the run ends cleanly
+- The guard adds no extra network round-trip — it reuses the same
+  `countTokens()` result (`actual`) the unguarded run already computes
+  and logs every iteration, it just acts on it
+
+## After (after — `tokenCountingGuarded.ts`)
+
+*(placeholder — fill in with the actual `pnpm run lesson:04-guarded`
+output once run; do not fill this in speculatively)*
+
 ## Conclusions
 
 1. The character/token heuristic is useful for rough on-the-fly monitoring,
@@ -127,6 +163,11 @@ the first place. Defense in depth, same principle as Incident 4.
    — a protected-file list scoped to `write_file` gave zero protection
    against the same file being read into context and resent to the API on
    every subsequent iteration.
+
+Point 6, on what the guarded run (`tokenCountingGuarded.ts`) actually
+changes and doesn't, goes here once it's been run — see its After
+section above; not pre-written, per this doc's own rule against
+invented output.
 
 ## Next
 
