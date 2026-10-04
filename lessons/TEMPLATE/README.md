@@ -1,9 +1,10 @@
 # NN — <Lesson title>
 
-**Files:** `<scriptBefore>.ts` (before/naive/unguarded), `<scriptAfter>.ts`
-(after — fix/guard/optimization applied) — this folder. (Or one file
-exporting both variants, e.g. `runWithX()`/`runWithoutX()`, dispatched by
-a CLI arg — see `lessons/05-context-compaction/contextWindowManagement.ts`.)
+**Files:** `<name>Before.ts` (naive/unguarded/unoptimized), `<name>After.ts`
+(fix/guard/optimization applied) — this folder. If both variants share
+heavy setup, factor it into a local helper both import (e.g.
+`lessons/05-context-compaction/tokenEstimation.ts`) rather than
+duplicating it across the two files.
 
 ## Goal
 
@@ -20,8 +21,8 @@ needs fixtures, generate them into `sandbox/` inside this same folder
 ## Run
 
 ```bash
-pnpm run lesson:NN            # before/naive/unguarded
-pnpm run lesson:NN-<variant>  # after — fix/guard/optimization applied
+pnpm run lesson:NN-before   # naive/unguarded
+pnpm run lesson:NN-after    # fix/guard/optimization applied
 ```
 
 Describe what actually differs between the two runs (same task, same

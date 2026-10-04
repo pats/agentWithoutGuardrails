@@ -1,8 +1,9 @@
 # 05 — Proactive Context Compaction
 
-**File:** `contextWindowManagement.ts` (this folder) — exports `runWithCompaction()`
-and `runWithoutCompaction()`
-**Helper:** `contextCompaction.ts` (`compactHistory()`)
+**Files:** `contextWindowManagementBefore.ts` (`runWithoutCompaction()`),
+`contextWindowManagementAfter.ts` (`runWithCompaction()`) — this folder,
+both built on the shared `tokenEstimation.ts`
+**Helper:** `contextCompaction.ts` (`compactHistory()`, used by the after variant only)
 
 ## Goal
 
@@ -25,27 +26,40 @@ pnpm exec tsx lessons/05-context-compaction/generateFixtures.ts
 ## Run
 
 ```bash
-pnpm run lesson:05-with-compaction     # runWithCompaction() — 10-iteration cap
-pnpm run lesson:05-without-compaction  # runWithoutCompaction() — 15-iteration cap
+pnpm run lesson:05-before   # runWithoutCompaction() — 15-iteration cap
+pnpm run lesson:05-after    # runWithCompaction() — 10-iteration cap
 ```
 
-`pnpm run lesson:05` still exists and is equivalent to
-`lesson:05-with-compaction` (default mode, kept for backward
-compatibility with earlier notes referencing it).
+Both run the identical task, loop, and thresholds logged
+(`tokenEstimation.ts`); `contextWindowManagementBefore.ts` never calls
+`compactHistory()`, so its iteration cap is raised from 10 to 15 to give
+it a realistic chance of actually hitting the real 200k-token limit (a
+hard 400 error, as in lesson 04) instead of just stopping early on the cap.
 
-`runWithoutCompaction()` is identical to `runWithCompaction()` — same
-task, same loop, same thresholds logged — except it never calls
-`compactHistory()`. Its iteration cap is raised from 10 to 15 to give it
-a realistic chance of actually hitting the real 200k-token limit (a hard
-400 error, as in lesson 04) instead of just stopping early on the cap.
+## Before (before — `contextWindowManagementBefore.ts`, without compaction)
 
-## Before (with compaction)
+Hypothesis, before running: with `compactHistory()` never called, the
+heuristic/actual token counts should climb past the 150k compaction
+threshold (and past the `WARNING_THRESHOLD` at 90%) uninterrupted —
+same growth curve the "with compaction" run shows right up to its
+first compaction event, but continuing instead of resetting. With three
+~1.5MB combined fixtures read every cycle the loop repeats, this should
+realistically hit the real 200k-token limit (a hard 400 error) within
+the 15-iteration cap, rather than completing the task or stopping on
+the cap the way the compacted run does.
+
+## After (before — `contextWindowManagementBefore.ts`, without compaction)
+
+*(placeholder — fill in with the actual `pnpm run lesson:05-before`
+output once run; do not fill this in speculatively)*
+
+## Before (after — `contextWindowManagementAfter.ts`, with compaction)
 
 Hypothesis, before running: proactive compaction at 75% of the context
 limit (150,000 tokens) should keep the agent under the real 200k wall
 and let it finish the task, instead of crashing the way lesson 04 did.
 
-## After (with compaction)
+## After (after — `contextWindowManagementAfter.ts`, with compaction)
 
 Fixtures: `access-log-en.txt` (431.3 KB, 4000 lines), `access-log-pl.txt`
 (484.4 KB, 4000 lines), `audit-log-en.txt` (647.0 KB, 6000 lines) — same
@@ -71,23 +85,6 @@ work existed (e.g. *"No prior work has been done on this task"*, *"No
 earlier work completed yet"*) — so each cycle restarted from scratch.
 Root cause and full analysis: `docs/incidents.md`, Incident 6.
 
-## Before (without compaction)
-
-Hypothesis, before running: with `compactHistory()` never called, the
-heuristic/actual token counts should climb past the 150k compaction
-threshold (and past the `WARNING_THRESHOLD` at 90%) uninterrupted —
-same growth curve the "with compaction" run showed right up to its
-first compaction event, but continuing instead of resetting. With three
-~1.5MB combined fixtures read every cycle the loop repeats, this should
-realistically hit the real 200k-token limit (a hard 400 error) within
-the 15-iteration cap, rather than completing the task or stopping on
-the cap the way the compacted run did.
-
-## After (without compaction)
-
-*(placeholder — fill in with the actual `pnpm run lesson:05-without-compaction`
-output once run; do not fill this in speculatively)*
-
 ## Conclusions
 
 1. Reducing token count and preserving task continuity are two
@@ -107,6 +104,10 @@ output once run; do not fill this in speculatively)*
    loss) than this softer failure (10 chances, at least a legible
    trace of what went wrong). It's an argument that compaction needs
    its own correctness check, not just a token-count check.
+
+Point 5, comparing directly against the before/without-compaction run,
+goes here once it's been run — see its After section above; not
+pre-written, per this doc's own rule against invented output.
 
 ## Next
 

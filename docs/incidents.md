@@ -73,8 +73,8 @@ At the time, also available as a repeatable check:
 all of `src/`, was removed later (see the `refactor: remove src/ main
 agent loop` commit) once the lessons became fully self-contained; the
 closest equivalent today is lesson 03's guarded/unguarded comparison
-(`lessons/03-sandbox-incident/sandboxIncident.ts` vs
-`sandboxIncidentGuarded.ts`).
+(`lessons/03-sandbox-incident/sandboxIncidentBefore.ts` vs
+`sandboxIncidentAfter.ts`).
 
 ## Incident 5: Unintended read of `.env` via broad "read all files" task
 

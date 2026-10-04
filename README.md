@@ -9,7 +9,7 @@ loops, tool use, and safety mechanics at a low level.
 ```bash
 pnpm install
 cp .env.example .env   # add your ANTHROPIC_API_KEY
-pnpm run lesson:01
+pnpm run lesson:01-before
 ```
 
 ## Structure
@@ -40,11 +40,11 @@ each folder is technically self-contained and duplicates what it needs.
 
 | # | Folder | Before | After |
 |---|---|---|---|
-| 01 | `lessons/01-streaming/` | `pnpm run lesson:01-non-streaming` | `pnpm run lesson:01` |
-| 02 | `lessons/02-system-prompt/` | `pnpm run lesson:02-cautious` | `pnpm run lesson:02-autonomous` |
-| 03 | `lessons/03-sandbox-incident/` | `pnpm run lesson:03` | `pnpm run lesson:03-guarded` |
-| 04 | `lessons/04-token-counting/` | `pnpm run lesson:04` | `pnpm run lesson:04-guarded` |
-| 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05-without-compaction` | `pnpm run lesson:05-with-compaction` |
+| 01 | `lessons/01-streaming/` | `pnpm run lesson:01-before` | `pnpm run lesson:01-after` |
+| 02 | `lessons/02-system-prompt/` | `pnpm run lesson:02-before` | `pnpm run lesson:02-after` |
+| 03 | `lessons/03-sandbox-incident/` | `pnpm run lesson:03-before` | `pnpm run lesson:03-after` |
+| 04 | `lessons/04-token-counting/` | `pnpm run lesson:04-before` | `pnpm run lesson:04-after` |
+| 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05-before` | `pnpm run lesson:05-after` |
 
 Each lesson has two runnable entry points — one naive/unguarded, one
 after the fix or optimization — and its own `README.md` documenting
@@ -98,9 +98,8 @@ expected to happen), not a literal snapshot of an empty file.
 ## Commands
 
 - `pnpm check` — format and lint with Biome
-- `pnpm run lesson:NN[-variant]` — run a specific lesson's before/after
-  entry point (see table above, or each lesson's own `README.md` for
-  the exact script names)
+- `pnpm run lesson:NN-before` / `pnpm run lesson:NN-after` — run a
+  specific lesson's before/after entry point (see table above)
 
 ## Safety notes
 

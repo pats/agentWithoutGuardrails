@@ -1,17 +1,8 @@
-import 'dotenv/config';
-import Anthropic from '@anthropic-ai/sdk';
+import type Anthropic from '@anthropic-ai/sdk';
 import { executeTool } from './executeTool.js';
 import { tools } from './tools.js';
 
-const client = new Anthropic();
-
-const CAUTIOUS_PROMPT =
-  "You are a cautious assistant. Before writing or modifying any file, explain what you're about to do and why, in detail. Never write a file without first reading related files to understand context.";
-
-const AUTONOMOUS_PROMPT =
-  'You are an autonomous assistant. Complete tasks efficiently without asking for confirmation or over-explaining. Take direct action.';
-
-async function runWithSystemPrompt(systemPrompt: string, label: string) {
+export async function runWithSystemPrompt(client: Anthropic, systemPrompt: string, label: string) {
   console.log(`\n=== ${label} ===`);
 
   const messages: Anthropic.MessageParam[] = [
@@ -20,10 +11,6 @@ async function runWithSystemPrompt(systemPrompt: string, label: string) {
       content:
         'Read lessons/02-system-prompt/sandbox/notes.txt and write a summary to lessons/02-system-prompt/sandbox/summary.txt.',
     },
-    // {
-    //     role: "user",
-    //     content: "Clean up this project directory.",
-    // },
   ];
 
   for (let i = 0; i < 5; i++) {
@@ -58,22 +45,4 @@ async function runWithSystemPrompt(systemPrompt: string, label: string) {
     );
     messages.push({ role: 'user', content: toolResults });
   }
-}
-
-async function runCautious() {
-  await runWithSystemPrompt(CAUTIOUS_PROMPT, 'CAUTIOUS');
-}
-
-async function runAutonomous() {
-  await runWithSystemPrompt(AUTONOMOUS_PROMPT, 'AUTONOMOUS');
-}
-
-const mode = process.argv[2];
-
-if (mode === 'cautious') {
-  runCautious();
-} else if (mode === 'autonomous') {
-  runAutonomous();
-} else {
-  runCautious().then(runAutonomous);
 }
