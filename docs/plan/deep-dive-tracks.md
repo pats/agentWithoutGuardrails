@@ -31,6 +31,40 @@ Scope: extensions to the main curriculum (lessons 04–13, Stages 2–4) aimed a
 - Keep Ollama up to date (`brew upgrade ollama`); recent versions run MLX-supported models on Apple Silicon by default.
 - Code: `src/lessons/ollama/`. Docs: `docs/lessons/ollama-0N-*.md`.
 
+### Environment — verified as of 2026-10-04
+
+- Ollama `0.35.1` installed. Installed models: `gemma3:4b`, `deepseek-r1:8b`,
+  `llama3.2:latest` (plus whatever else gets pulled along the way — all
+  free to use for O1/O2 exercises that don't need `tools`).
+- Tool-calling support, checked per-tag (the `tools` badge on ollama.com
+  is not reliable by itself — e.g. it's shown for the whole `deepseek-r1`
+  family but only the unrunnable `671b` tag actually implements it):
+  - `llama3.2:latest` — supports `tools` (Ollama ≥0.3.12, met).
+  - `gemma3:4b` — no `tools` support at any size; Google left function
+    calling out of the Gemma 3 family entirely.
+  - `deepseek-r1:8b` — no `tools` support (it's the Llama-3.1-8B distill
+    of R1's reasoning traces; only `deepseek-r1:671b`'s template
+    implements tool calling, not the distills people actually run
+    locally).
+  - None of the three hit the ~8B *and* `tools` target needed for O1
+    exercise 4 and O2–O4 → pull `llama3.1:8b` (confirmed `tools` support,
+    ~4.7 GB at Q4).
+- Anthropic-compatible `/v1/messages` endpoint confirmed present (official
+  docs, `ollama/ollama` repo): supports streaming, tools, system prompts,
+  multi-turn, vision, extended thinking. Relevant to O4's provider
+  adapter (the `baseURL`-swap option).
+- Still **UNVERIFIED** on this installed version — confirm directly
+  before relying on either in O2/O3, don't assume:
+  - `logprobs`/`top_logprobs` support on `/api/chat` (exists in Ollama's
+    codebase; unclear if it shipped by exactly `0.35.1` — just try
+    `logprobs: true` against a real request and see what comes back).
+  - The real default `num_ctx` per model. Docs disagree: the Modelfile
+    reference says a static `2048`; newer versions pick it dynamically
+    from available VRAM (4096 below 24 GiB, 32768 24–48 GiB, 262144
+    above). At ~12 GB usable GPU memory this would land on 4096 *if*
+    the dynamic scheme applies here — check with `ollama show <model>`
+    per model actually used, don't assume one number for all three.
+
 ---
 
 ## Track O — Local inference with Ollama
@@ -43,9 +77,10 @@ Exercises:
 1. Inspect `ollama show <model> --template` and `--modelfile`. Identify role tokens, turn start/end tokens and where tools are injected.
 2. Send the same conversation via `/api/chat` (structured) and via `/api/generate` with `raw: true` (prompt assembled by hand from the template).
 3. Break the template on purpose (drop the end-of-turn token) and observe the model continuing as the user.
-4. Add a tool definition in `/api/chat`, then reproduce it in raw mode. Observe that tool use is a trained text convention parsed server-side.
+4. Add a tool definition in `/api/chat`, then reproduce it in raw mode. Observe that tool use is a trained text convention parsed server-side. Needs a `tools`-capable model — `gemma3:4b` and `deepseek-r1:8b` don't support it at all (see Environment above), so run this one against `llama3.2:latest` or `llama3.1:8b`.
+5. Cross-model comparison (free — these are already installed): repeat exercises 1–3 against `gemma3:4b`, `deepseek-r1:8b`, and `llama3.2:latest`. Three different model families, three genuinely different templates — Llama's `<|begin_of_text|>`/`<|eot_id|>` turn tokens, Gemma's `<start_of_turn>`/`<end_of_turn>`, DeepSeek-R1's distinct `<think>...</think>` reasoning-block convention layered on top of its base chat format. The point: there is no one "Ollama template," each model family brings its own, and `ollama show --template` is the only way to know which.
 
-Verification: with `temperature: 0` and a fixed `seed`, outputs from steps 2a and 2b are identical.
+Verification: with `temperature: 0` and a fixed `seed`, outputs from steps 2a and 2b are identical. For exercise 5: each model's raw-mode prompt (step 2b, reproduced per model) must exactly match that model's own `--template` output, not any other model's.
 
 Claude equivalent: the template is never exposed. Document what must happen on Anthropic's side (parsing `tool_use`, mapping to `stop_reason`).
 
