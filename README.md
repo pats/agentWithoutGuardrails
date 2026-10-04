@@ -1,6 +1,6 @@
 # agentWithoutGuardrails
 
-A hand-built Claude tool-use agent loop on the raw Messages API — no
+Hand-built Claude tool-use agent loops on the raw Messages API — no
 Agent SDK abstractions. Learning project for understanding agentic
 loops, tool use, and safety mechanics at a low level.
 
@@ -9,14 +9,16 @@ loops, tool use, and safety mechanics at a low level.
 ```bash
 pnpm install
 cp .env.example .env   # add your ANTHROPIC_API_KEY
-pnpm dev
+pnpm run lesson:01
 ```
 
 ## Structure
 
-- `src/index.ts` — main agent loop
-- `src/tools.ts` / `src/executeTool.ts` — tool definitions and execution
-- `src/security.ts` / `src/protectedFiles.ts` — safety layers
+There is no shared `src/` agent loop — every tool-use loop, its
+`executeTool.ts`/`tools.ts`, and its safety layers (`security.ts`/
+`protectedFiles.ts`) live inside the lesson that needs them. Start at
+`lessons/01-streaming/` and work forward.
+
 - `lessons/NN-<slug>/` — the numbered curriculum. Each lesson is a
   **self-contained folder**: its own copy of every file it needs
   (script, any shared helpers like `executeTool.ts`/`tools.ts` it
@@ -89,16 +91,16 @@ expected to happen), not a literal snapshot of an empty file.
 
 ## Commands
 
-- `pnpm dev` — run the main agent loop
 - `pnpm check` — format and lint with Biome
 - `pnpm run lesson:NN` — run a specific lesson (see table above)
 
 ## Safety notes
 
-This agent has file read/write access. Two independent layers restrict it:
-`isPathSafe` keeps writes inside the project directory, and `isProtectedFile`
-blocks writes to specific sensitive files (`.env` and similar) regardless of
-path formatting or letter case. Both were hardened after real incidents —
+Lessons that give the agent file read/write access guard it with two
+independent layers, each lesson's own copy: `isPathSafe` keeps writes
+inside the project directory, and `isProtectedFile` blocks writes to
+specific sensitive files (`.env` and similar) regardless of path
+formatting or letter case. Both were hardened after real incidents —
 see `docs/incidents.md`.
 
 ## Contributing / AI assistants
