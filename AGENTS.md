@@ -80,3 +80,17 @@ record. See the Reproducibility section in `README.md`.
   before its code existed, `-done` at the commit where its code, docs,
   and conclusions were finished. Tag both before moving to the next
   lesson — see the Reproducibility section in `README.md`.
+
+## Deep-dive tracks (separate from the lesson lifecycle above)
+
+`docs/plan/deep-dive-tracks.md` specs out extensions below the Claude
+API/SDK level (local inference via Ollama, raw MCP, sandboxing, etc.),
+listed in `README.md` under "Planned: deep-dive tracks". These
+intentionally do **not** use `lessons/NN-<slug>/` or `scripts/new-lesson.sh`
+— their code goes under `src/lessons/ollama/` (and `src/lessons/<tool>/`
+for the other tracks) and their docs under `docs/lessons/ollama-0N-*.md`,
+per the spec. Same rules still apply: self-contained, no real project
+files, destructive/agentic experiments confined to a `sandbox/` inside
+the track's own folder, Before/After/Conclusions documented honestly.
+Don't run `new-lesson.sh` for these or suggest folding them into the
+`lessons/NN-<slug>/` numbering.

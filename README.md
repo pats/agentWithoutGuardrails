@@ -25,6 +25,7 @@ pnpm dev
   any single `lessons/NN-<slug>/` folder out of this repo and it would
   still run.
 - `docs/incidents.md` — dangerous agent behavior observed while building this
+- `docs/plan/` — specs for planned extensions, written before any code exists
 
 ## Lessons
 
@@ -46,6 +47,30 @@ running (**Before**), what actually happened (**After**) — including
 failures, e.g. lesson 04's context-limit crash and lesson 05's
 compaction loop — and the conclusions carried forward into later
 lessons or into `docs/incidents.md`.
+
+## Planned: deep-dive tracks
+
+Extensions to the main curriculum, going below the Claude API/SDK level
+(local inference, raw protocols, infra). Full spec:
+`docs/plan/deep-dive-tracks.md`. Not yet implemented — no `lessons/NN-<slug>/`
+folders exist for these; code will live under `src/lessons/ollama/` and
+`src/lessons/<tool>/`, docs under `docs/lessons/`, intentionally separate
+from the `lessons/NN-<slug>/` scaffolding used by lessons 01–05 (see
+`AGENTS.md`).
+
+| Track | Title | Depends on | Status |
+|---|---|---|---|
+| O1 | Chat template | Ollama installed | planned |
+| O2 | Tokenization & sampling | O1 | planned |
+| O3 | KV cache & context window | O1 | planned |
+| O4 | Loop portability / provider adapter | Stage 1 loop, O1–O3 | planned |
+| T1 | llama.cpp (GGUF, quantization, grammars) | O1 | planned |
+| T2 | Raw MCP (JSON-RPC over stdio/HTTP) | Lesson 10 | planned |
+| T3 | Sandboxing & process isolation | Stage 1 loop | planned |
+| T4 | Observability (OpenTelemetry) | Stage 1 loop | planned |
+| T5 | pgvector / embeddings | Stage 3–4 | planned |
+| T6 | Temporal / durable execution | Stage 3–4 | planned |
+| T7 | vLLM (NVIDIA only) | O3 | planned, conditional |
 
 ### Reproducibility
 
