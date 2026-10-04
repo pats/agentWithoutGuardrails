@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 const SANDBOX_DIR = process.argv[2] ?? 'lessons/04-token-counting/sandbox'; // pass a target dir to reuse this generator for other lessons
 
-// Fake log-style content — angielski, powtarzalny ale nie identyczny (żeby nie kompresowało się do jednego tokena)
+// Fake log-style content — repetitive but not identical, so it doesn't compress to one token
 function generateEnglishLog(lines: number): string {
   const levels = ['INFO', 'WARN', 'ERROR', 'DEBUG'];
   const services = ['auth-service', 'billing-worker', 'api-gateway', 'notification-queue'];
@@ -29,7 +29,7 @@ function generateEnglishLog(lines: number): string {
   return out.join('\n');
 }
 
-// Ten sam kształt danych, ale po polsku — do porównania błędu heurystyki EN vs PL
+// Same data shape, in Polish — to compare the heuristic's error rate EN vs PL
 function generatePolishLog(lines: number): string {
   const levels = ['INFO', 'OSTRZEŻENIE', 'BŁĄD', 'DEBUG'];
   const services = ['usługa-autoryzacji', 'proces-rozliczeń', 'brama-api', 'kolejka-powiadomień'];

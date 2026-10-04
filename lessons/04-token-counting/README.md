@@ -164,10 +164,8 @@ output once run; do not fill this in speculatively)*
    against the same file being read into context and resent to the API on
    every subsequent iteration.
 
-Point 6, on what the guarded run (`tokenCountingAfter.ts`) actually
-changes and doesn't, goes here once it's been run — see its After
-section above; not pre-written, per this doc's own rule against
-invented output.
+6. *(fill in after running `lesson:04-after`: what the guard actually
+   changes, and doesn't)*
 
 ## Next
 

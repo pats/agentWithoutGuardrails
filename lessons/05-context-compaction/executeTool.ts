@@ -4,7 +4,7 @@ import { isPathSafe } from './security.js';
 import { ListFilesInput, ReadFileInput, WriteFileInput } from './tools.js';
 
 const MAX_FILE_CONTENT_CHARS = 500_000; // reverted after testing the 150k compaction threshold
-// against large, non-truncated fixtures (see docs/lessons — compaction test run)
+// against large, non-truncated fixtures (see lesson 05's compaction test, docs/incidents.md Incident 6)
 
 export async function executeTool(name: string, input: unknown): Promise<string> {
   if (name === 'read_file') {
