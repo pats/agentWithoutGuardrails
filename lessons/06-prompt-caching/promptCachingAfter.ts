@@ -58,14 +58,14 @@ async function main() {
 
   const results: CacheCallResult[] = [];
   for (let i = 1; i <= 3; i++) {
-    // Knob 1: one character changed at the very END of the cached text
+    // variant 1: one character changed at the very END of the cached text
     const changed = `${system.slice(0, -1)}!`;
     results.push(await callOnce(client, 'last char changed', changed, question, cached));
 
-    // Knob 2: original text again
+    // variant 2: original text again
     results.push(await callOnce(client, 'original again', system, question, cached));
 
-    // Knob 3: same text, but a tool definition added
+    // variant 3: same text, but a tool definition added
     const tools: Anthropic.Tool[] = [
       {
         name: 'noop',
@@ -75,7 +75,7 @@ async function main() {
     ];
     results.push(await callOnce(client, 'tool added', system, question, { ...cached, tools }));
 
-    // Knob 4: original text, no tools, no cache_control in the request
+    // Variant 4: original text, no tools, no cache_control in the request
     const uncached = { cacheControl: false };
     results.push(await callOnce(client, 'no cache_control', system, question, uncached));
   }
