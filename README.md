@@ -74,6 +74,7 @@ each folder is technically self-contained and duplicates what it needs.
 | 03 | `lessons/03-sandbox-incident/` | `pnpm run lesson:03-before` | `pnpm run lesson:03-after` |
 | 04 | `lessons/04-token-counting/` | `pnpm run lesson:04-before` | `pnpm run lesson:04-after` |
 | 05 | `lessons/05-context-compaction/` | `pnpm run lesson:05-before` | `pnpm run lesson:05-after` |
+| 06 | `lessons/06-prompt-caching/` | `pnpm run lesson:06-before` | `pnpm run lesson:06-after` |
 
 Each lesson has two runnable entry points — one naive/unguarded, one
 after the fix or optimization — and its own `README.md` documenting

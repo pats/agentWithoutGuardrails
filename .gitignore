@@ -5,3 +5,4 @@ dist
 summary.txt
 lessons/04-token-counting/sandbox/*.txt
 lessons/05-context-compaction/sandbox/*.txt
+lessons/06-prompt-caching/sandbox/*.txt

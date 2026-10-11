@@ -15,7 +15,9 @@
     "lesson:04-before": "tsx lessons/04-token-counting/tokenCountingBefore.ts",
     "lesson:04-after": "tsx lessons/04-token-counting/tokenCountingAfter.ts",
     "lesson:05-before": "tsx lessons/05-context-compaction/contextWindowManagementBefore.ts",
-    "lesson:05-after": "tsx lessons/05-context-compaction/contextWindowManagementAfter.ts"
+    "lesson:05-after": "tsx lessons/05-context-compaction/contextWindowManagementAfter.ts",
+    "lesson:06-before": "tsx lessons/06-prompt-caching/promptCachingBefore.ts",
+    "lesson:06-after": "tsx lessons/06-prompt-caching/promptCachingAfter.ts"
   },
   "packageManager": "pnpm@10.33.0",
   "dependencies": {
