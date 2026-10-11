@@ -2,12 +2,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Written into this lesson's own sandbox/ — never another lesson's folder.
 const SANDBOX_DIR = join(dirname(fileURLToPath(import.meta.url)), 'sandbox');
 const OUTPUT_FILE = join(SANDBOX_DIR, 'knowledge-base.txt');
 
-// 8 sections x 40 paragraphs. Roughly 140 KB, which is well above the 4096-token minimum
-// cacheable prefix for claude-haiku-4-5-20251001 (see the lesson README, Prerequisites).
 const SECTIONS = [
   'Incident response runbook',
   'Access control policy',
@@ -20,8 +17,6 @@ const SECTIONS = [
 ];
 const PARAGRAPHS_PER_SECTION = 40;
 
-// Fixed vocabularies. Paragraphs pick from these by index arithmetic, so the output is
-// byte-identical on every run: no Date.now(), no Math.random().
 const ROLES = [
   'the on-call engineer',
   'the service owner',
@@ -75,7 +70,6 @@ const FOLLOW_UPS = [
   'Share the lessons with adjacent teams in the monthly operations review.',
 ];
 
-// Wraps around the vocabulary, so any integer index is safe and deterministic.
 function pick<T>(items: readonly T[], index: number): T {
   return items[((index % items.length) + items.length) % items.length];
 }
@@ -118,8 +112,6 @@ async function main() {
   await writeFile(OUTPUT_FILE, text, 'utf-8');
 
   const bytes = Buffer.byteLength(text, 'utf-8');
-  // Heuristic only (about 4 characters per token for English prose). The exact count comes
-  // from usage.input_tokens in the API response, not from this number.
   console.log(`Written ${OUTPUT_FILE}`);
   console.log(
     `  ${(bytes / 1024).toFixed(1)} KB, ${SECTIONS.length} sections, ` +
