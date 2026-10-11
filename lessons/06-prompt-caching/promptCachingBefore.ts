@@ -1,6 +1,7 @@
 import 'dotenv/config';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import type Anthropic from '@anthropic-ai/sdk';
+import Anthropic from '@anthropic-ai/sdk';
 
 export const MODEL = 'claude-haiku-4-5-20251001';
 
@@ -17,7 +18,6 @@ export interface CacheCallResult {
 }
 
 /**
- * TODO: make one Messages API call and return its usage counters as a CacheCallResult.
  * With cacheControl: false, no cache_control marker is sent.
  */
 export async function callOnce(
@@ -27,16 +27,46 @@ export async function callOnce(
   userMessage: string,
   options: { cacheControl: boolean; tools?: Anthropic.Tool[] },
 ): Promise<CacheCallResult> {
-  throw new Error(`TODO: implement callOnce (${label})`);
+  const systemBlock: Anthropic.TextBlockParam = { type: 'text', text: system };
+
+  const startedAt = performance.now();
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 100,
+    system: [systemBlock],
+    tools: options.tools,
+    messages: [{ role: 'user', content: userMessage }],
+  });
+
+  return {
+    label,
+    inputTokens: response.usage.input_tokens,
+    cacheCreationInputTokens: response.usage.cache_creation_input_tokens ?? 0,
+    cacheReadInputTokens: response.usage.cache_read_input_tokens ?? 0,
+    latencyMs: Math.round(performance.now() - startedAt),
+  };
 }
 
 async function main() {
-  // TODO: create the client (new Anthropic()), read KNOWLEDGE_BASE_PATH,
-  //       and stop with a clear message if the file is missing (run generateFixtures.ts first)
-  // TODO: baseline — 3 identical calls with cacheControl: false (same system text, same user message)
-  // TODO: print the 3 CacheCallResult rows; expect cacheCreationInputTokens and
-  //       cacheReadInputTokens to be 0 on every call
-  // TODO: compare inputTokens across the 3 calls — this is the cost caching should remove
+  const client = new Anthropic();
+
+  let knowledgeBase: string;
+  try {
+    knowledgeBase = await readFile(KNOWLEDGE_BASE_PATH, 'utf-8');
+  } catch {
+    console.error(`Missing ${KNOWLEDGE_BASE_PATH} — run generateFixtures.ts first.`);
+    process.exit(1);
+  }
+
+  const system = `Answer questions using only this knowledge base.\n\n${knowledgeBase}`;
+  const question = 'Who performs the secondary check in reference RB-3-07? One sentence.';
+  const options = { cacheControl: false };
+
+  const results: CacheCallResult[] = [];
+  for (let i = 1; i <= 3; i++) {
+    results.push(await callOnce(client, `no-cache #${i}`, system, question, options));
+  }
+  console.table(results);
 }
 
 main();
